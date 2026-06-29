@@ -1,0 +1,38 @@
+# ── Приватные данные (НИКОГДА не коммитить реальные данные учеников) ──
+# Разрешён только синтетический пример в sample-data/*.sample.csv
+*.csv
+!sample-data/*.sample.csv
+
+# исходные выгрузки и эталонные списки
+raw/
+data/
+*raw*.csv
+*LongData*.csv
+*Список*.csv
+*Структура*.csv
+*Результаты*.csv
+
+# ── Ключи и секреты ──
+.env
+.env.*
+*secret*
+*apikey*
+*api_key*
+credentials*.json
+client_secret*.json
+.clasp.json          # содержит scriptId — лучше не публиковать
+.clasprc.json
+
+# ── Служебное ──
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+dist/
+build/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
