@@ -73,14 +73,14 @@ def main():
             print(f"   • {key[0]} — встречается у: {teachers} (одинаковые баллы → вероятно один PDF дважды)")
 
     print("\n-- Расхождения класса между источниками --")
-    ros_by_name = {normalize_name(r["ФИО"]): r for r in roster}
+    ros_by_name = {(normalize_name(r["ФИО"]), r["Учитель"]): r for r in roster}
     mism = 0
     for r in raw:
-        k = normalize_name(r["ФИО"])
+        k = (normalize_name(r["ФИО"]), r["Учитель"])
         if k in ros_by_name and r.get("Класс") and ros_by_name[k].get("Класс"):
             if r["Класс"].strip().upper() != ros_by_name[k]["Класс"].strip().upper():
                 mism += 1
-                print(f"   • {k}: raw={r['Класс']} vs roster={ros_by_name[k]['Класс']}")
+                print(f"   • {k[0]} ({k[1]}): raw={r['Класс']} vs roster={ros_by_name[k]['Класс']}")
     if mism == 0:
         print("OK: классы совпадают")
 

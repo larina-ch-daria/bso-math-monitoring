@@ -1,238 +1,280 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>БСО · Мониторинг по математике — демо-дашборд</title>
+<title>БСО · дашборд (демо на синтетике)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
-  :root{
-    --bg:#FBFAFE; --card:#FFFFFF; --ink:#2B2440; --muted:#8A82A3;
-    --line:#ECE8F5; --accent:#7C6BB0; --accent-soft:#EDE9F7;
-    --l1:#E5736A; --l2:#E8B04B; --l3:#5BB6A3; --l4:#6C5CB8;
-    --proj:#7C6BB0; --ctrl:#CDC3E8; --az:#7C6BB0; --ru:#5BB6A3;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Montserrat,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
-  .wrap{display:flex;min-height:100vh}
-  /* sidebar */
-  .side{width:230px;flex:0 0 230px;background:var(--card);border-right:1px solid var(--line);
-        padding:26px 18px;position:sticky;top:0;height:100vh}
-  .brand{font-weight:700;font-size:15px;letter-spacing:.2px;line-height:1.35}
-  .brand small{display:block;color:var(--muted);font-weight:500;font-size:11px;margin-top:6px;letter-spacing:.3px}
-  .nav{margin-top:30px;display:flex;flex-direction:column;gap:4px}
-  .nav button{all:unset;cursor:pointer;padding:11px 14px;border-radius:10px;font-size:13.5px;
-        font-weight:500;color:var(--muted);transition:.15s}
-  .nav button:hover{background:var(--accent-soft);color:var(--ink)}
-  .nav button.on{background:var(--accent);color:#fff;font-weight:600}
-  .side .foot{position:absolute;bottom:22px;left:18px;right:18px;font-size:10.5px;color:var(--muted);line-height:1.5}
-  /* main */
-  .main{flex:1;padding:34px 40px 60px;max-width:1180px}
-  h1{font-size:21px;font-weight:700;margin:0 0 2px}
-  .sub{color:var(--muted);font-size:12.5px;margin-bottom:26px}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:30px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
-  .kpi .v{font-size:30px;font-weight:700;letter-spacing:-.5px}
-  .kpi .k{color:var(--muted);font-size:12px;font-weight:500;margin-top:4px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 8px}
-  .panel h3{margin:0 0 4px;font-size:13px;font-weight:600}
-  .panel .tag{font-size:10.5px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.6px}
-  .cbox{position:relative;height:230px;margin-top:8px}     /* фикс. высота — иначе Chart.js растёт бесконечно */
-  .cbox.tall{height:300px}
-  .full{grid-column:1/-1}
-  .seg{display:inline-flex;gap:4px;background:var(--accent-soft);padding:4px;border-radius:10px;margin-bottom:14px}
-  .seg button{all:unset;cursor:pointer;padding:7px 14px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--muted)}
-  .seg button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(44,36,64,.08)}
-  .view{display:none}.view.on{display:block}
-  .note{background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:12.5px;color:#5b5278;line-height:1.55;margin-top:24px}
-  .note b{color:var(--accent)}
-  @media(max-width:860px){.wrap{flex-direction:column}.side{width:auto;flex:none;height:auto;position:static;border-right:none;border-bottom:1px solid var(--line)}
-    .side .foot{position:static;margin-top:18px}.nav{flex-direction:row;flex-wrap:wrap}.main{padding:24px 18px}
-    .kpis,.grid3{grid-template-columns:1fr}}
+  :root{ --proj:#6D28D9; --non:#C026D3; --aut:#C4B5FD; --spr:#6D28D9; --ink:#2c2838; --muted:#8b86a0; --line:#ece8f5; --bg:#f4f1fb; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--ink); }
+  .app{ display:flex; min-height:100vh; }
+  .side{ width:212px; flex:none; background:#fff; border-right:1px solid var(--line); padding:20px 14px; }
+  .brand{ font-weight:700; font-size:18px; color:#4c1d95; line-height:1.1; }
+  .brandsub{ font-size:11px; color:var(--muted); margin:2px 0 6px; }
+  .demobadge{ display:inline-block; font-size:9.5px; font-weight:700; letter-spacing:.4px; color:#6D28D9; background:#efe7ff; border:1px solid #ddd0fb; border-radius:6px; padding:2px 6px; margin-bottom:18px; }
+  .nav{ display:flex; flex-direction:column; gap:3px; }
+  .nav button{ text-align:left; border:0; background:none; padding:10px 12px; border-radius:10px; font-family:inherit; font-size:13.5px; font-weight:600; color:#6b6680; cursor:pointer; }
+  .nav button.on{ background:var(--proj); color:#fff; }
+  .nav button:not(.on):hover{ background:var(--bg); }
+  .sidefoot{ font-size:10.5px; color:#b3aec2; margin-top:20px; line-height:1.5; }
+  .main{ flex:1; padding:22px 26px 40px; min-width:0; }
+  h1{ font-size:20px; font-weight:700; margin:0 0 16px; letter-spacing:-.2px; }
+  .controls{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:18px; }
+  .lbl{ font-size:11px; font-weight:600; color:var(--muted); }
+  .seg{ display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; background:#fff; }
+  .seg button{ border:0; padding:6px 12px; font-family:inherit; font-size:12.5px; font-weight:600; background:#fff; color:var(--muted); cursor:pointer; }
+  .seg button.on{ background:var(--proj); color:#fff; }
+  .legend{ margin-left:auto; display:flex; gap:14px; font-size:12px; color:var(--muted); align-items:center; }
+  .dot{ display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:-1px; margin-right:5px; }
+  .cards{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:14px; }
+  @media(min-width:780px){ .cards{ grid-template-columns:repeat(4,1fr);} }
+  .stat{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:15px; }
+  .stat .k{ font-size:11px; color:var(--muted); }
+  .stat .v{ font-size:25px; font-weight:700; margin-top:4px; }
+  .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:14px; }
+  .grid3{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:14px; }
+  @media(min-width:1000px){ .grid3{ grid-template-columns:repeat(3,1fr); } }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .card h3{ font-size:13px; font-weight:600; margin:0 0 2px; }
+  .card .note{ font-size:11px; color:#b3aec2; margin:0 0 10px; }
+  .cbox{ position:relative; height:300px; }
+  .cbox.tall{ height:360px; }
+  .cbox.short{ height:250px; }
+  .aibox{ margin-top:6px; }
+  .aihead{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .aihead b{ font-size:13.5px; }
+  .aibtn{ border:1px solid var(--proj); color:var(--proj); background:#fff; border-radius:9px; padding:6px 12px; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .aibtn:hover{ background:#f5f1ff; } .aibtn[disabled]{ opacity:.5; cursor:default; }
+  .aiout{ white-space:pre-wrap; font-size:13px; line-height:1.6; color:#42405a; }
+  .foot{ color:#b3aec2; font-size:11px; margin-top:16px; line-height:1.5; }
+  #err{ display:none; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:12px; border-radius:10px; font-size:13px; }
+  #load{ color:var(--muted); font-size:13px; padding:40px; }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
   <aside class="side">
-    <div class="brand">БСО · Математика<small>Мониторинг 2–3 кл · AZ / RU · демо на синтетике</small></div>
-    <nav class="nav" id="nav">
-      <button class="on" data-v="ov">Обзор</button>
-      <button data-v="diff">Решаемость по сложности</button>
-      <button data-v="task">Разбор по заданиям</button>
-      <button data-v="coh">Проект vs контроль</button>
-    </nav>
-    <div class="foot">Данные синтетические, имена вымышлены.<br>Часть кода — с ИИ-ассистентом; логика и метрики авторские.</div>
+    <div class="brand">БСО</div>
+    <div class="brandsub">Апрель 2026</div>
+    <div class="demobadge">ДЕМО · СИНТЕТИКА</div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sidefoot" id="sidefoot"></div>
   </aside>
+
   <main class="main">
-    <!-- ОБЗОР -->
-    <section class="view on" id="ov">
-      <h1>Обзор</h1>
-      <div class="sub">Все ученики выборки · одна страница — без настройки и входа</div>
-      <div class="kpis">
-        <div class="kpi"><div class="v" id="k-n"></div><div class="k">учеников в выборке</div></div>
-        <div class="kpi"><div class="v" id="k-usp"></div><div class="k">успеваемость (не «недостаточный»)</div></div>
-        <div class="kpi"><div class="v" id="k-kach"></div><div class="k">качественная («базовый»+«продвинутый»)</div></div>
+    <div id="load">Загружаю данные…</div>
+    <div id="err"></div>
+
+    <div id="app" style="display:none">
+      <h1 id="pageTitle">Обзор</h1>
+      <div class="controls">
+        <span class="lbl">Параллель</span><div class="seg" id="segGrade"></div>
+        <span class="legend">
+          <span><span class="dot" style="background:var(--proj)"></span>В проекте</span>
+          <span><span class="dot" style="background:var(--non)"></span>Не в проекте</span>
+        </span>
       </div>
-      <div class="grid3">
-        <div class="panel"><div class="tag">Общий</div><h3>Распределение по уровням</h3><div class="cbox"><canvas id="lv-all"></canvas></div></div>
-        <div class="panel"><div class="tag">Сектор AZ</div><h3>Распределение по уровням</h3><div class="cbox"><canvas id="lv-az"></canvas></div></div>
-        <div class="panel"><div class="tag">Сектор RU</div><h3>Распределение по уровням</h3><div class="cbox"><canvas id="lv-ru"></canvas></div></div>
+
+      <div id="taskMetricWrap" style="display:none; margin-bottom:6px"><div class="seg" id="segMetric"></div></div>
+      <div id="pageBody"></div>
+
+      <div class="card aibox">
+        <div class="aihead"><b>✨ ИИ-анализ (образец)</b><button class="aibtn" id="aiBtn">Проанализировать этот срез</button></div>
+        <div class="aiout" id="aiOut">В live-версии текст генерирует Gemini по текущему срезу. Здесь — оффлайн-образец, собранный из тех же чисел (без вызова ИИ). Нажми кнопку.</div>
       </div>
-    </section>
-    <!-- СЛОЖНОСТЬ -->
-    <section class="view" id="diff">
-      <h1>Решаемость по сложности</h1>
-      <div class="sub">Доля учеников, набравших &gt; 50% баллов за задания данного уровня сложности</div>
-      <div class="grid3">
-        <div class="panel"><div class="tag">Общий</div><h3>Лёгкие · средние · сложные</h3><div class="cbox"><canvas id="df-all"></canvas></div></div>
-        <div class="panel"><div class="tag">Сектор AZ</div><h3>Лёгкие · средние · сложные</h3><div class="cbox"><canvas id="df-az"></canvas></div></div>
-        <div class="panel"><div class="tag">Сектор RU</div><h3>Лёгкие · средние · сложные</h3><div class="cbox"><canvas id="df-ru"></canvas></div></div>
-      </div>
-    </section>
-    <!-- ЗАДАНИЯ -->
-    <section class="view" id="task">
-      <h1>Разбор по заданиям</h1>
-      <div class="sub">Средний процент набранных баллов по каждому из 16 заданий</div>
-      <div class="seg" id="task-seg">
-        <button class="on" data-s="all">Общий</button><button data-s="AZ">AZ</button><button data-s="RU">RU</button>
-      </div>
-      <div class="panel full"><div class="cbox tall"><canvas id="tk"></canvas></div></div>
-    </section>
-    <!-- КОГОРТЫ -->
-    <section class="view" id="coh">
-      <h1>Проект vs контроль</h1>
-      <div class="sub">Сравнение когорт «в проекте» и «не в проекте»</div>
-      <div class="grid3">
-        <div class="panel full"><h3>Ключевые метрики, %</h3><div class="cbox tall"><canvas id="ch-kpi"></canvas></div></div>
-      </div>
-      <div class="note"><b>Что показывает демо.</b> Это статическая копия живого дашборда на синтетических данных.
-        В рабочей версии (Google Apps Script + Chart.js) те же метрики считаются на сервере из листа
-        <code>LongData_All</code>, добавляются сравнения «весна vs осень» и ИИ-комментарий к срезу.</div>
-    </section>
+      <p class="foot" id="foot"></p>
+    </div>
   </main>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <script>
-const BSO = {"tasks": [{"n": 1, "topic": "Числа и счёт", "d": 1, "m": 1}, {"n": 2, "topic": "Сравнение чисел", "d": 1, "m": 1}, {"n": 3, "topic": "Сложение в пределах 100", "d": 1, "m": 2}, {"n": 4, "topic": "Вычитание в пределах 100", "d": 1, "m": 2}, {"n": 5, "topic": "Разрядный состав числа", "d": 2, "m": 2}, {"n": 6, "topic": "Сложение с переходом через десяток", "d": 2, "m": 2}, {"n": 7, "topic": "Вычитание с переходом через десяток", "d": 2, "m": 2}, {"n": 8, "topic": "Таблица умножения", "d": 2, "m": 2}, {"n": 9, "topic": "Деление", "d": 2, "m": 2}, {"n": 10, "topic": "Порядок действий", "d": 2, "m": 2}, {"n": 11, "topic": "Текстовая задача (1 действие)", "d": 2, "m": 3}, {"n": 12, "topic": "Текстовая задача (2 действия)", "d": 3, "m": 3}, {"n": 13, "topic": "Геометрические фигуры", "d": 1, "m": 2}, {"n": 14, "topic": "Периметр", "d": 3, "m": 3}, {"n": 15, "topic": "Единицы измерения", "d": 2, "m": 2}, {"n": 16, "topic": "Логическая задача", "d": 3, "m": 3}], "students": [{"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 0, 0, 2, 1, 0, 1, 2, 1, 1, 1, 2, 1, 1, 2, 2]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 0, 1, 0, 2, 2, 1, 1, 1, 2, 1, 1, 1]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 2, 1, 2, 2, 2, 0, 3, 0, 1, 2, 1, 3]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "базовый", "s": [0, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 1, 1]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 0, 2, 1, 1, 1, 2, 2, 1, 1, 3, 1, 1, 1, 0, 1]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 2, 0, 1, 2, 2, 2, 3, 2, 1, 2, 1, 1]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 2, 2, 2, 1, 1, 2, 2, 3, 2, 2, 1, 1]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 2, 1, 2]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "недостаточный", "s": [1, 0, 2, 2, 1, 0, 0, 0, 1, 0, 1, 0, 2, 0, 1, 0]}, {"t": "Учитель 01", "se": "AZ", "st": "в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 2, 2, 2, 1, 1, 2, 1, 3, 2, 1, 2, 3]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 1, 2, 2, 2, 1, 0, 1, 2, 0, 1, 2, 1, 2, 2, 1]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [1, 1, 2, 2, 1, 0, 1, 0, 1, 0, 1, 1, 2, 1, 1, 1]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 0, 0, 2, 2, 1, 1, 1, 2, 1, 3, 3, 1, 1, 1, 1]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 0, 1, 1, 1, 1, 2, 2, 1, 3, 2, 1, 2, 1, 3]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 1, 2, 1, 2]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 1, 1, 2, 2, 1, 2, 2, 0, 1, 0, 1, 2, 2, 0, 1]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 0, 1, 1, 2, 1, 1, 1, 1, 2, 3, 2, 1, 3, 1, 2]}, {"t": "Учитель 02", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 1, 2, 0, 1, 1, 0, 2, 2, 2, 2, 2, 2, 2, 0, 1]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 2, 1, 1, 1, 2, 1, 1, 2, 1, 2, 2, 2, 1]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 0, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 1, 1, 1]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 0, 2, 2, 1, 1, 2, 2, 2, 2, 2, 3, 1, 1, 1, 1]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 0, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 3]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 0, 1, 2, 1, 2, 2, 2, 1, 1, 2, 3, 2, 0, 2, 0]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 0, 0, 1, 0, 2, 1, 0, 1, 0, 0, 2, 0, 1, 0, 0]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "продвинутый", "s": [1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 3, 3, 2, 2, 1, 2]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 0, 2, 0, 2, 0, 1, 2, 1, 2, 3, 1, 2]}, {"t": "Учитель 03", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 2, 1, 2, 1, 0, 2, 1, 2, 1, 1, 2, 0, 2]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 1, 1, 2, 2, 2, 1, 2, 1, 3, 1, 1, 1, 2]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 1, 2, 1, 0, 2, 1, 1, 0, 2, 2, 2, 0, 2, 3]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 1, 0, 1, 2, 1, 2, 1, 0, 0, 3, 1, 0, 0, 2, 0]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 1, 2, 1, 1, 1, 2, 2, 2, 1, 3, 2, 2, 2, 2]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 2, 2, 2, 2, 2, 2, 3, 1, 0, 1, 1, 0]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 1, 0, 1, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 1, 0, 2, 1, 1, 1, 1, 1, 0, 2, 2, 2, 1, 1, 1]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 2, 1, 2, 2, 0, 2, 3, 2, 2, 2, 3]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 1, 1, 2, 0, 1, 2, 0, 1, 2, 2, 0, 1, 1, 1, 1]}, {"t": "Учитель 04", "se": "AZ", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 1, 2, 1, 1, 2, 2, 2, 1, 2, 3, 2, 2, 2, 2]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [1, 1, 1, 2, 0, 1, 1, 1, 1, 1, 2, 0, 1, 0, 2, 1]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 2, 0, 1, 2, 2, 2, 1, 1, 2, 0, 1, 1, 2, 3]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 0, 1, 1, 2, 1, 1, 1, 1, 3, 1, 1, 2, 2, 2]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 1, 1, 2, 2, 2, 1, 2, 2, 3, 1, 2, 1, 1, 2]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2, 2, 1, 2]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 1, 1, 1, 1, 2, 0, 0, 1, 2, 1, 1, 1, 1, 2]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 1, 1, 2, 2, 1, 2, 0, 3, 2, 2, 2, 2, 1]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 2, 2, 2, 2, 0, 1, 2, 3, 2, 2, 2, 2, 2]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 2, 2, 1, 0, 2, 1, 1, 1, 2, 1, 2, 1, 2, 1]}, {"t": "Учитель 05", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 1, 2, 0, 1, 2, 1, 1, 2, 3, 2, 1, 2, 2, 2]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "продвинутый", "s": [1, 1, 2, 2, 1, 2, 2, 2, 2, 2, 3, 3, 2, 3, 2, 2]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 3, 2, 2]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 1, 1, 2, 2, 1, 1, 1, 2, 3, 3, 2, 1, 2, 2]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [0, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 2, 1, 0, 2, 2]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [1, 1, 1, 1, 1, 0, 0, 0, 2, 1, 2, 1, 1, 0, 2, 1]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 1, 2, 1, 2, 1, 3, 3, 2, 2, 2, 3]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1, 0, 2]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 1, 1, 1, 1, 2, 2, 1, 1, 2, 0, 0, 0, 1, 0]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 2, 1, 1, 1, 1, 1, 0, 1, 0, 0, 2, 0, 0, 0]}, {"t": "Учитель 06", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [0, 1, 1, 1, 0, 0, 2, 2, 1, 2, 3, 0, 0, 1, 1, 2]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 3, 1, 2, 2, 2, 3]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [0, 1, 2, 1, 1, 2, 1, 2, 1, 0, 1, 2, 2, 1, 2, 3]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 0, 2, 2, 2, 0, 1, 1, 2, 0, 1, 2, 1, 1, 1, 3]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [1, 1, 2, 2, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 2, 1]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 0, 2, 2, 0, 0, 2, 2, 2, 0, 3, 1, 1, 2, 0, 2]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 0, 0, 2, 1, 2, 1, 2, 0, 2, 2, 2, 0, 2, 0, 1]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 3, 1, 3, 1, 3]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 2, 0, 1, 1, 1]}, {"t": "Учитель 07", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 2, 1, 0, 2, 1, 0, 1, 1, 0, 0, 2, 1, 2, 0]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 0, 2, 0, 0, 1, 0]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 1, 2, 1, 2, 1, 2, 1, 0, 0, 0, 1, 1, 2, 1]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 0, 2, 1, 2, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 2]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 3, 3, 1, 2, 2, 2]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 1, 2, 1, 0, 2, 2, 2, 0, 2, 0, 2, 2, 0, 0]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 3, 2, 2, 3, 2, 0]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "базовый", "s": [0, 0, 2, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 2, 1, 3]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 2, 2, 1, 2, 0, 2, 2, 2, 0, 1, 1, 1, 2, 1]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [1, 0, 1, 2, 1, 0, 1, 2, 1, 1, 1, 1, 0, 1, 1, 0]}, {"t": "Учитель 08", "se": "AZ", "st": "в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 2, 0, 0, 1, 0, 1, 1, 0, 3, 1, 0, 1, 0, 1]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 1, 2, 1, 0, 1, 1, 0, 1, 2, 1, 2, 0, 1, 2]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 0, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 2, 2, 2, 1]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 0, 2, 1, 1, 1, 1, 2, 0, 1, 3, 2, 1, 1, 2, 1]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 3, 0, 2, 2, 0, 0]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 2, 2, 1, 2, 1, 2, 2, 1, 2, 3, 2, 2]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 1, 1, 2, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 0, 1, 2, 0, 0, 1, 2, 0, 0, 1, 1, 0, 2, 0, 1]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 3, 3, 2, 2, 2, 3]}, {"t": "Учитель 09", "se": "RU", "st": "не в проекте", "p": "2", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 1, 1, 2, 1, 2, 3, 2, 1, 3, 2, 3]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 0, 3, 2, 0]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 1, 2, 2, 1, 2, 2, 3, 2, 2, 2, 1, 1]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 1, 2, 2, 1, 2, 1, 3, 1, 2, 3, 2, 1]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 0, 2, 2, 1, 2, 1, 1, 2, 2, 3, 2, 2, 2, 2, 2]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 3, 1, 3]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 2, 2, 2, 1, 1, 2, 2, 1, 3, 1, 1, 1, 2, 2]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 1, 0, 2, 1, 0, 0, 1, 1, 0, 2, 0, 1, 2, 1, 0]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 0, 0, 1, 0, 1, 1, 0, 1, 2, 1, 1, 1, 0, 0, 0]}, {"t": "Учитель 10", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 0, 2, 2, 0, 1, 1, 1, 0, 0, 1, 2, 1, 2, 0, 0]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 1, 2, 2, 2, 2, 2, 0, 1, 0, 2, 1, 2, 2, 1]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [1, 1, 2, 0, 0, 1, 0, 0, 1, 1, 1, 2, 2, 0, 1, 1]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 0, 2, 2, 2, 1]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 2, 2, 2, 0, 2, 2, 2, 0, 1, 1, 2, 2, 1, 2]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 3, 2, 2, 1, 2]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [0, 0, 2, 1, 2, 1, 2, 1, 2, 0, 3, 2, 2, 2, 2, 1]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 1, 1, 1, 0, 1, 1, 1, 2, 0, 3, 1, 2, 1, 2, 1]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "недостаточный", "s": [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 3, 1, 0, 0, 0, 1]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "удовлетворительный", "s": [1, 0, 1, 2, 0, 1, 1, 1, 0, 0, 1, 2, 1, 1, 2, 3]}, {"t": "Учитель 11", "se": "RU", "st": "не в проекте", "p": "2", "lv": "базовый", "s": [1, 1, 1, 2, 2, 2, 1, 2, 0, 1, 3, 1, 1, 3, 2, 1]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 3]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 0, 1, 2, 1, 1, 0, 0, 2, 1, 3, 2, 2, 1, 2, 3]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 0]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 1, 2, 0, 0, 1, 2, 0, 1, 3, 0, 0, 0, 1, 1]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 0, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 2, 2, 1, 2]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [1, 0, 2, 2, 1, 2, 1, 0, 0, 0, 2, 1, 0, 1, 1, 2]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 2, 0, 0, 1]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "продвинутый", "s": [1, 1, 2, 2, 1, 2, 1, 2, 1, 2, 3, 3, 2, 3, 2, 3]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 3, 1, 2, 1, 1, 3]}, {"t": "Учитель 12", "se": "RU", "st": "не в проекте", "p": "3", "lv": "базовый", "s": [0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 3, 1, 2]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 1, 2, 2, 1, 1, 0, 0, 1, 2, 2, 0, 2, 1, 1, 1]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [1, 1, 2, 0, 1, 0, 1, 2, 1, 0, 2, 1, 1, 1, 1, 0]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 0, 0, 2, 1, 2, 0, 1, 0, 1, 2, 2, 1, 0, 1, 0]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 0, 1, 0, 0, 0, 0, 1, 1, 2, 0, 1, 0, 0, 0, 0]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 0, 2, 2, 1, 0, 1, 2, 2, 1, 3, 1, 1, 2, 2, 1]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 2, 1, 0, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [1, 0, 2, 1, 1, 1, 1, 0, 1, 1, 3, 2, 1, 0, 1, 2]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 0]}, {"t": "Учитель 13", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [1, 0, 2, 1, 0, 0, 0, 0, 1, 0, 2, 0, 1, 1, 1, 0]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "базовый", "s": [1, 0, 2, 2, 2, 2, 1, 2, 1, 2, 3, 3, 1, 2, 2, 2]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [0, 1, 2, 1, 2, 0, 2, 1, 1, 2, 0, 0, 2, 1, 2, 2]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [1, 1, 1, 1, 1, 1, 0, 1, 0, 2, 0, 1, 2, 1, 1, 1]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "базовый", "s": [1, 1, 2, 2, 2, 2, 2, 2, 2, 1, 3, 2, 2, 1, 2, 1]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "продвинутый", "s": [0, 0, 2, 2, 2, 2, 1, 2, 2, 2, 3, 3, 2, 3, 2, 1]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "недостаточный", "s": [0, 1, 1, 1, 2, 1, 0, 0, 1, 1, 2, 1, 1, 0, 1, 1]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "продвинутый", "s": [1, 1, 2, 2, 2, 2, 2, 1, 1, 2, 2, 3, 2, 3, 2, 2]}, {"t": "Учитель 14", "se": "RU", "st": "не в проекте", "p": "3", "lv": "удовлетворительный", "s": [0, 1, 2, 1, 1, 2, 2, 2, 1, 2, 1, 0, 2, 2, 1, 1]}]};
-const LEVELS = ["недостаточный","удовлетворительный","базовый","продвинутый"];
-const LCOL = {"недостаточный":"#E5736A","удовлетворительный":"#E8B04B","базовый":"#5BB6A3","продвинутый":"#6C5CB8"};
-const FONT = "Montserrat";
-Chart.defaults.font.family = FONT;
-Chart.defaults.color = "#8A82A3";
+var DEMO_DATA = {"byGrade": {"2": {"sectors": {"Общий": {"Да": {"n": 369, "avg": 56.9, "levels": {"Недостаточный": 39, "Минимальный": 158, "Базовый": 126, "Продвинутый": 46}, "uspevaemost": 89.4, "kachestvo": 46.6, "tasks": [{"t": 1, "completion": 63.4, "maxed": 63.4, "unsolved": 36.6}, {"t": 2, "completion": 64.8, "maxed": 64.8, "unsolved": 35.2}, {"t": 3, "completion": 57.7, "maxed": 35.5, "unsolved": 42.3}, {"t": 4, "completion": 54.5, "maxed": 34.4, "unsolved": 45.5}, {"t": 5, "completion": 58.0, "maxed": 37.1, "unsolved": 42.0}, {"t": 6, "completion": 60.2, "maxed": 38.8, "unsolved": 39.8}, {"t": 7, "completion": 58.4, "maxed": 36.9, "unsolved": 41.6}, {"t": 8, "completion": 57.6, "maxed": 37.7, "unsolved": 42.4}, {"t": 9, "completion": 56.6, "maxed": 34.4, "unsolved": 43.4}, {"t": 10, "completion": 59.1, "maxed": 38.8, "unsolved": 40.9}, {"t": 11, "completion": 57.0, "maxed": 35.8, "unsolved": 43.0}, {"t": 12, "completion": 50.4, "maxed": 17.3, "unsolved": 49.6}, {"t": 13, "completion": 63.7, "maxed": 43.4, "unsolved": 36.3}, {"t": 14, "completion": 52.7, "maxed": 29.0, "unsolved": 47.3}, {"t": 15, "completion": 55.8, "maxed": 36.0, "unsolved": 44.2}, {"t": 16, "completion": 51.2, "maxed": 29.3, "unsolved": 48.8}], "solvability": {"легкий": 53.4, "средний": 62.9, "высокий": 44.2}}, "Нет": {"n": 245, "avg": 51.3, "levels": {"Недостаточный": 48, "Минимальный": 109, "Базовый": 68, "Продвинутый": 20}, "uspevaemost": 80.4, "kachestvo": 35.9, "tasks": [{"t": 1, "completion": 60.8, "maxed": 60.8, "unsolved": 39.2}, {"t": 2, "completion": 56.7, "maxed": 56.7, "unsolved": 43.3}, {"t": 3, "completion": 54.5, "maxed": 36.7, "unsolved": 45.5}, {"t": 4, "completion": 54.1, "maxed": 35.1, "unsolved": 45.9}, {"t": 5, "completion": 51.6, "maxed": 30.2, "unsolved": 48.4}, {"t": 6, "completion": 53.5, "maxed": 31.8, "unsolved": 46.5}, {"t": 7, "completion": 49.8, "maxed": 31.8, "unsolved": 50.2}, {"t": 8, "completion": 53.5, "maxed": 29.0, "unsolved": 46.5}, {"t": 9, "completion": 49.6, "maxed": 30.6, "unsolved": 50.4}, {"t": 10, "completion": 50.2, "maxed": 27.8, "unsolved": 49.8}, {"t": 11, "completion": 55.1, "maxed": 37.1, "unsolved": 44.9}, {"t": 12, "completion": 44.6, "maxed": 15.1, "unsolved": 55.4}, {"t": 13, "completion": 60.4, "maxed": 38.4, "unsolved": 39.6}, {"t": 14, "completion": 41.8, "maxed": 21.2, "unsolved": 58.2}, {"t": 15, "completion": 51.2, "maxed": 29.8, "unsolved": 48.8}, {"t": 16, "completion": 43.5, "maxed": 23.3, "unsolved": 56.5}], "solvability": {"легкий": 45.3, "средний": 53.5, "высокий": 33.9}}}, "AZ": {"Да": {"n": 199, "avg": 56.3, "levels": {"Недостаточный": 26, "Минимальный": 85, "Базовый": 62, "Продвинутый": 26}, "uspevaemost": 86.9, "kachestvo": 44.2, "tasks": [{"t": 1, "completion": 62.3, "maxed": 62.3, "unsolved": 37.7}, {"t": 2, "completion": 64.8, "maxed": 64.8, "unsolved": 35.2}, {"t": 3, "completion": 59.0, "maxed": 37.7, "unsolved": 41.0}, {"t": 4, "completion": 52.0, "maxed": 31.2, "unsolved": 48.0}, {"t": 5, "completion": 58.8, "maxed": 36.2, "unsolved": 41.2}, {"t": 6, "completion": 57.5, "maxed": 36.7, "unsolved": 42.5}, {"t": 7, "completion": 56.0, "maxed": 34.2, "unsolved": 44.0}, {"t": 8, "completion": 52.5, "maxed": 33.7, "unsolved": 47.5}, {"t": 9, "completion": 57.0, "maxed": 35.2, "unsolved": 43.0}, {"t": 10, "completion": 59.3, "maxed": 39.2, "unsolved": 40.7}, {"t": 11, "completion": 56.5, "maxed": 35.7, "unsolved": 43.5}, {"t": 12, "completion": 49.4, "maxed": 16.1, "unsolved": 50.6}, {"t": 13, "completion": 61.8, "maxed": 43.2, "unsolved": 38.2}, {"t": 14, "completion": 53.8, "maxed": 32.2, "unsolved": 46.2}, {"t": 15, "completion": 57.8, "maxed": 38.2, "unsolved": 42.2}, {"t": 16, "completion": 53.5, "maxed": 32.7, "unsolved": 46.5}], "solvability": {"легкий": 55.8, "средний": 61.3, "высокий": 47.7}}, "Нет": {"n": 121, "avg": 47.5, "levels": {"Недостаточный": 28, "Минимальный": 60, "Базовый": 24, "Продвинутый": 9}, "uspevaemost": 76.9, "kachestvo": 27.3, "tasks": [{"t": 1, "completion": 56.2, "maxed": 56.2, "unsolved": 43.8}, {"t": 2, "completion": 46.3, "maxed": 46.3, "unsolved": 53.7}, {"t": 3, "completion": 48.3, "maxed": 32.2, "unsolved": 51.7}, {"t": 4, "completion": 48.3, "maxed": 27.3, "unsolved": 51.7}, {"t": 5, "completion": 47.5, "maxed": 26.4, "unsolved": 52.5}, {"t": 6, "completion": 50.4, "maxed": 28.1, "unsolved": 49.6}, {"t": 7, "completion": 46.7, "maxed": 28.1, "unsolved": 53.3}, {"t": 8, "completion": 47.9, "maxed": 26.4, "unsolved": 52.1}, {"t": 9, "completion": 49.2, "maxed": 28.9, "unsolved": 50.8}, {"t": 10, "completion": 48.3, "maxed": 27.3, "unsolved": 51.7}, {"t": 11, "completion": 55.4, "maxed": 36.4, "unsolved": 44.6}, {"t": 12, "completion": 40.5, "maxed": 11.6, "unsolved": 59.5}, {"t": 13, "completion": 56.6, "maxed": 34.7, "unsolved": 43.4}, {"t": 14, "completion": 36.4, "maxed": 16.5, "unsolved": 63.6}, {"t": 15, "completion": 47.9, "maxed": 27.3, "unsolved": 52.1}, {"t": 16, "completion": 41.7, "maxed": 23.1, "unsolved": 58.3}], "solvability": {"легкий": 36.4, "средний": 48.8, "высокий": 28.9}}}, "RU": {"Да": {"n": 170, "avg": 57.6, "levels": {"Недостаточный": 13, "Минимальный": 73, "Базовый": 64, "Продвинутый": 20}, "uspevaemost": 92.4, "kachestvo": 49.4, "tasks": [{"t": 1, "completion": 64.7, "maxed": 64.7, "unsolved": 35.3}, {"t": 2, "completion": 64.7, "maxed": 64.7, "unsolved": 35.3}, {"t": 3, "completion": 56.2, "maxed": 32.9, "unsolved": 43.8}, {"t": 4, "completion": 57.4, "maxed": 38.2, "unsolved": 42.6}, {"t": 5, "completion": 57.1, "maxed": 38.2, "unsolved": 42.9}, {"t": 6, "completion": 63.2, "maxed": 41.2, "unsolved": 36.8}, {"t": 7, "completion": 61.2, "maxed": 40.0, "unsolved": 38.8}, {"t": 8, "completion": 63.5, "maxed": 42.4, "unsolved": 36.5}, {"t": 9, "completion": 56.2, "maxed": 33.5, "unsolved": 43.8}, {"t": 10, "completion": 58.8, "maxed": 38.2, "unsolved": 41.2}, {"t": 11, "completion": 57.6, "maxed": 35.9, "unsolved": 42.4}, {"t": 12, "completion": 51.6, "maxed": 18.8, "unsolved": 48.4}, {"t": 13, "completion": 65.9, "maxed": 43.5, "unsolved": 34.1}, {"t": 14, "completion": 51.5, "maxed": 25.3, "unsolved": 48.5}, {"t": 15, "completion": 53.5, "maxed": 33.5, "unsolved": 46.5}, {"t": 16, "completion": 48.5, "maxed": 25.3, "unsolved": 51.5}], "solvability": {"легкий": 50.6, "средний": 64.7, "высокий": 40.0}}, "Нет": {"n": 124, "avg": 54.9, "levels": {"Недостаточный": 20, "Минимальный": 49, "Базовый": 44, "Продвинутый": 11}, "uspevaemost": 83.9, "kachestvo": 44.4, "tasks": [{"t": 1, "completion": 65.3, "maxed": 65.3, "unsolved": 34.7}, {"t": 2, "completion": 66.9, "maxed": 66.9, "unsolved": 33.1}, {"t": 3, "completion": 60.5, "maxed": 41.1, "unsolved": 39.5}, {"t": 4, "completion": 59.7, "maxed": 42.7, "unsolved": 40.3}, {"t": 5, "completion": 55.6, "maxed": 33.9, "unsolved": 44.4}, {"t": 6, "completion": 56.5, "maxed": 35.5, "unsolved": 43.5}, {"t": 7, "completion": 52.8, "maxed": 35.5, "unsolved": 47.2}, {"t": 8, "completion": 58.9, "maxed": 31.5, "unsolved": 41.1}, {"t": 9, "completion": 50.0, "maxed": 32.3, "unsolved": 50.0}, {"t": 10, "completion": 52.0, "maxed": 28.2, "unsolved": 48.0}, {"t": 11, "completion": 54.8, "maxed": 37.9, "unsolved": 45.2}, {"t": 12, "completion": 48.7, "maxed": 18.5, "unsolved": 51.3}, {"t": 13, "completion": 64.1, "maxed": 41.9, "unsolved": 35.9}, {"t": 14, "completion": 47.2, "maxed": 25.8, "unsolved": 52.8}, {"t": 15, "completion": 54.4, "maxed": 32.3, "unsolved": 45.6}, {"t": 16, "completion": 45.2, "maxed": 23.4, "unsolved": 54.8}], "solvability": {"легкий": 54.0, "средний": 58.1, "высокий": 38.7}}}}, "difficulty": {"легкий": 3, "средний": 10, "высокий": 3}}, "3": {"sectors": {"Общий": {"Да": {"n": 197, "avg": 61.2, "levels": {"Недостаточный": 14, "Минимальный": 68, "Базовый": 81, "Продвинутый": 34}, "uspevaemost": 92.9, "kachestvo": 58.4, "tasks": [{"t": 1, "completion": 72.1, "maxed": 72.1, "unsolved": 27.9}, {"t": 2, "completion": 68.5, "maxed": 68.5, "unsolved": 31.5}, {"t": 3, "completion": 57.9, "maxed": 37.6, "unsolved": 42.1}, {"t": 4, "completion": 62.4, "maxed": 42.1, "unsolved": 37.6}, {"t": 5, "completion": 62.2, "maxed": 43.7, "unsolved": 37.8}, {"t": 6, "completion": 59.9, "maxed": 41.6, "unsolved": 40.1}, {"t": 7, "completion": 65.5, "maxed": 45.2, "unsolved": 34.5}, {"t": 8, "completion": 60.2, "maxed": 41.1, "unsolved": 39.8}, {"t": 9, "completion": 65.0, "maxed": 44.7, "unsolved": 35.0}, {"t": 10, "completion": 57.9, "maxed": 41.6, "unsolved": 42.1}, {"t": 11, "completion": 63.5, "maxed": 43.1, "unsolved": 36.5}, {"t": 12, "completion": 54.8, "maxed": 23.4, "unsolved": 45.2}, {"t": 13, "completion": 68.8, "maxed": 51.3, "unsolved": 31.2}, {"t": 14, "completion": 56.1, "maxed": 35.0, "unsolved": 43.9}, {"t": 15, "completion": 64.2, "maxed": 46.2, "unsolved": 35.8}, {"t": 16, "completion": 52.3, "maxed": 31.0, "unsolved": 47.7}], "solvability": {"легкий": 53.8, "средний": 70.1, "высокий": 51.8}}, "Нет": {"n": 489, "avg": 51.6, "levels": {"Недостаточный": 95, "Минимальный": 205, "Базовый": 136, "Продвинутый": 53}, "uspevaemost": 80.6, "kachestvo": 38.7, "tasks": [{"t": 1, "completion": 59.1, "maxed": 59.1, "unsolved": 40.9}, {"t": 2, "completion": 54.0, "maxed": 54.0, "unsolved": 46.0}, {"t": 3, "completion": 49.2, "maxed": 29.2, "unsolved": 50.8}, {"t": 4, "completion": 53.7, "maxed": 33.1, "unsolved": 46.3}, {"t": 5, "completion": 52.1, "maxed": 32.5, "unsolved": 47.9}, {"t": 6, "completion": 49.4, "maxed": 30.3, "unsolved": 50.6}, {"t": 7, "completion": 50.6, "maxed": 31.7, "unsolved": 49.4}, {"t": 8, "completion": 56.0, "maxed": 35.4, "unsolved": 44.0}, {"t": 9, "completion": 55.0, "maxed": 35.0, "unsolved": 45.0}, {"t": 10, "completion": 50.6, "maxed": 30.9, "unsolved": 49.4}, {"t": 11, "completion": 50.7, "maxed": 30.5, "unsolved": 49.3}, {"t": 12, "completion": 46.2, "maxed": 17.2, "unsolved": 53.8}, {"t": 13, "completion": 61.0, "maxed": 40.5, "unsolved": 39.0}, {"t": 14, "completion": 46.2, "maxed": 26.4, "unsolved": 53.8}, {"t": 15, "completion": 51.8, "maxed": 30.1, "unsolved": 48.2}, {"t": 16, "completion": 47.5, "maxed": 28.2, "unsolved": 52.5}], "solvability": {"легкий": 42.7, "средний": 53.8, "высокий": 37.2}}}, "AZ": {"Да": {"n": 124, "avg": 59.3, "levels": {"Недостаточный": 11, "Минимальный": 43, "Базовый": 52, "Продвинутый": 18}, "uspevaemost": 91.1, "kachestvo": 56.5, "tasks": [{"t": 1, "completion": 69.4, "maxed": 69.4, "unsolved": 30.6}, {"t": 2, "completion": 68.5, "maxed": 68.5, "unsolved": 31.5}, {"t": 3, "completion": 58.5, "maxed": 38.7, "unsolved": 41.5}, {"t": 4, "completion": 58.9, "maxed": 38.7, "unsolved": 41.1}, {"t": 5, "completion": 61.7, "maxed": 41.1, "unsolved": 38.3}, {"t": 6, "completion": 58.1, "maxed": 41.9, "unsolved": 41.9}, {"t": 7, "completion": 64.1, "maxed": 42.7, "unsolved": 35.9}, {"t": 8, "completion": 59.7, "maxed": 41.1, "unsolved": 40.3}, {"t": 9, "completion": 62.5, "maxed": 40.3, "unsolved": 37.5}, {"t": 10, "completion": 55.6, "maxed": 39.5, "unsolved": 44.4}, {"t": 11, "completion": 62.5, "maxed": 39.5, "unsolved": 37.5}, {"t": 12, "completion": 52.7, "maxed": 23.4, "unsolved": 47.3}, {"t": 13, "completion": 67.7, "maxed": 50.8, "unsolved": 32.3}, {"t": 14, "completion": 51.2, "maxed": 29.8, "unsolved": 48.8}, {"t": 15, "completion": 61.3, "maxed": 44.4, "unsolved": 38.7}, {"t": 16, "completion": 50.0, "maxed": 28.2, "unsolved": 50.0}], "solvability": {"легкий": 52.4, "средний": 69.4, "высокий": 45.2}}, "Нет": {"n": 219, "avg": 53.4, "levels": {"Недостаточный": 39, "Минимальный": 89, "Базовый": 63, "Продвинутый": 28}, "uspevaemost": 82.2, "kachestvo": 41.6, "tasks": [{"t": 1, "completion": 63.5, "maxed": 63.5, "unsolved": 36.5}, {"t": 2, "completion": 51.6, "maxed": 51.6, "unsolved": 48.4}, {"t": 3, "completion": 54.1, "maxed": 32.9, "unsolved": 45.9}, {"t": 4, "completion": 54.6, "maxed": 33.8, "unsolved": 45.4}, {"t": 5, "completion": 54.8, "maxed": 35.2, "unsolved": 45.2}, {"t": 6, "completion": 50.5, "maxed": 32.4, "unsolved": 49.5}, {"t": 7, "completion": 52.5, "maxed": 34.7, "unsolved": 47.5}, {"t": 8, "completion": 58.2, "maxed": 35.6, "unsolved": 41.8}, {"t": 9, "completion": 56.2, "maxed": 35.6, "unsolved": 43.8}, {"t": 10, "completion": 49.5, "maxed": 32.4, "unsolved": 50.5}, {"t": 11, "completion": 54.8, "maxed": 35.2, "unsolved": 45.2}, {"t": 12, "completion": 47.3, "maxed": 15.5, "unsolved": 52.7}, {"t": 13, "completion": 60.3, "maxed": 39.7, "unsolved": 39.7}, {"t": 14, "completion": 51.1, "maxed": 29.7, "unsolved": 48.9}, {"t": 15, "completion": 53.0, "maxed": 31.1, "unsolved": 47.0}, {"t": 16, "completion": 49.5, "maxed": 30.6, "unsolved": 50.5}], "solvability": {"легкий": 47.9, "средний": 54.8, "высокий": 42.0}}}, "RU": {"Да": {"n": 73, "avg": 64.3, "levels": {"Недостаточный": 3, "Минимальный": 25, "Базовый": 29, "Продвинутый": 16}, "uspevaemost": 95.9, "kachestvo": 61.6, "tasks": [{"t": 1, "completion": 76.7, "maxed": 76.7, "unsolved": 23.3}, {"t": 2, "completion": 68.5, "maxed": 68.5, "unsolved": 31.5}, {"t": 3, "completion": 56.8, "maxed": 35.6, "unsolved": 43.2}, {"t": 4, "completion": 68.5, "maxed": 47.9, "unsolved": 31.5}, {"t": 5, "completion": 63.0, "maxed": 47.9, "unsolved": 37.0}, {"t": 6, "completion": 63.0, "maxed": 41.1, "unsolved": 37.0}, {"t": 7, "completion": 67.8, "maxed": 49.3, "unsolved": 32.2}, {"t": 8, "completion": 61.0, "maxed": 41.1, "unsolved": 39.0}, {"t": 9, "completion": 69.2, "maxed": 52.1, "unsolved": 30.8}, {"t": 10, "completion": 61.6, "maxed": 45.2, "unsolved": 38.4}, {"t": 11, "completion": 65.1, "maxed": 49.3, "unsolved": 34.9}, {"t": 12, "completion": 58.4, "maxed": 23.3, "unsolved": 41.6}, {"t": 13, "completion": 70.5, "maxed": 52.1, "unsolved": 29.5}, {"t": 14, "completion": 64.4, "maxed": 43.8, "unsolved": 35.6}, {"t": 15, "completion": 69.2, "maxed": 49.3, "unsolved": 30.8}, {"t": 16, "completion": 56.2, "maxed": 35.6, "unsolved": 43.8}], "solvability": {"легкий": 56.2, "средний": 71.2, "высокий": 63.0}}, "Нет": {"n": 270, "avg": 50.2, "levels": {"Недостаточный": 56, "Минимальный": 116, "Базовый": 73, "Продвинутый": 25}, "uspevaemost": 79.3, "kachestvo": 36.3, "tasks": [{"t": 1, "completion": 55.6, "maxed": 55.6, "unsolved": 44.4}, {"t": 2, "completion": 55.9, "maxed": 55.9, "unsolved": 44.1}, {"t": 3, "completion": 45.2, "maxed": 26.3, "unsolved": 54.8}, {"t": 4, "completion": 53.0, "maxed": 32.6, "unsolved": 47.0}, {"t": 5, "completion": 50.0, "maxed": 30.4, "unsolved": 50.0}, {"t": 6, "completion": 48.5, "maxed": 28.5, "unsolved": 51.5}, {"t": 7, "completion": 49.1, "maxed": 29.3, "unsolved": 50.9}, {"t": 8, "completion": 54.3, "maxed": 35.2, "unsolved": 45.7}, {"t": 9, "completion": 54.1, "maxed": 34.4, "unsolved": 45.9}, {"t": 10, "completion": 51.5, "maxed": 29.6, "unsolved": 48.5}, {"t": 11, "completion": 47.4, "maxed": 26.7, "unsolved": 52.6}, {"t": 12, "completion": 45.3, "maxed": 18.5, "unsolved": 54.7}, {"t": 13, "completion": 61.7, "maxed": 41.1, "unsolved": 38.3}, {"t": 14, "completion": 42.2, "maxed": 23.7, "unsolved": 57.8}, {"t": 15, "completion": 50.9, "maxed": 29.3, "unsolved": 49.1}, {"t": 16, "completion": 45.9, "maxed": 26.3, "unsolved": 54.1}], "solvability": {"легкий": 38.5, "средний": 53.0, "высокий": 33.3}}}}, "difficulty": {"легкий": 3, "средний": 10, "высокий": 3}}}, "autumn": {"2": {"Общий": {"Да": {"n": 369, "avg": 46.4, "levels": {"Недостаточный": 39, "Минимальный": 158, "Базовый": 126, "Продвинутый": 46}, "uspevaemost": 76.9, "kachestvo": 39.3, "tasks": [{"t": 1, "completion": 63.4, "maxed": 63.4, "unsolved": 36.6}, {"t": 2, "completion": 64.8, "maxed": 64.8, "unsolved": 35.2}, {"t": 3, "completion": 57.7, "maxed": 35.5, "unsolved": 42.3}, {"t": 4, "completion": 54.5, "maxed": 34.4, "unsolved": 45.5}, {"t": 5, "completion": 58.0, "maxed": 37.1, "unsolved": 42.0}, {"t": 6, "completion": 60.2, "maxed": 38.8, "unsolved": 39.8}, {"t": 7, "completion": 58.4, "maxed": 36.9, "unsolved": 41.6}, {"t": 8, "completion": 57.6, "maxed": 37.7, "unsolved": 42.4}, {"t": 9, "completion": 56.6, "maxed": 34.4, "unsolved": 43.4}, {"t": 10, "completion": 59.1, "maxed": 38.8, "unsolved": 40.9}, {"t": 11, "completion": 57.0, "maxed": 35.8, "unsolved": 43.0}, {"t": 12, "completion": 50.4, "maxed": 17.3, "unsolved": 49.6}, {"t": 13, "completion": 63.7, "maxed": 43.4, "unsolved": 36.3}, {"t": 14, "completion": 52.7, "maxed": 29.0, "unsolved": 47.3}, {"t": 15, "completion": 55.8, "maxed": 36.0, "unsolved": 44.2}, {"t": 16, "completion": 51.2, "maxed": 29.3, "unsolved": 48.8}], "solvability": {"легкий": 42.9, "средний": 52.4, "высокий": 33.7}}, "Нет": {"n": 245, "avg": 45.3, "levels": {"Недостаточный": 48, "Минимальный": 109, "Базовый": 68, "Продвинутый": 20}, "uspevaemost": 72.4, "kachestvo": 31.7, "tasks": [{"t": 1, "completion": 60.8, "maxed": 60.8, "unsolved": 39.2}, {"t": 2, "completion": 56.7, "maxed": 56.7, "unsolved": 43.3}, {"t": 3, "completion": 54.5, "maxed": 36.7, "unsolved": 45.5}, {"t": 4, "completion": 54.1, "maxed": 35.1, "unsolved": 45.9}, {"t": 5, "completion": 51.6, "maxed": 30.2, "unsolved": 48.4}, {"t": 6, "completion": 53.5, "maxed": 31.8, "unsolved": 46.5}, {"t": 7, "completion": 49.8, "maxed": 31.8, "unsolved": 50.2}, {"t": 8, "completion": 53.5, "maxed": 29.0, "unsolved": 46.5}, {"t": 9, "completion": 49.6, "maxed": 30.6, "unsolved": 50.4}, {"t": 10, "completion": 50.2, "maxed": 27.8, "unsolved": 49.8}, {"t": 11, "completion": 55.1, "maxed": 37.1, "unsolved": 44.9}, {"t": 12, "completion": 44.6, "maxed": 15.1, "unsolved": 55.4}, {"t": 13, "completion": 60.4, "maxed": 38.4, "unsolved": 39.6}, {"t": 14, "completion": 41.8, "maxed": 21.2, "unsolved": 58.2}, {"t": 15, "completion": 51.2, "maxed": 29.8, "unsolved": 48.8}, {"t": 16, "completion": 43.5, "maxed": 23.3, "unsolved": 56.5}], "solvability": {"легкий": 39.3, "средний": 47.5, "высокий": 27.9}}}, "AZ": {"Да": {"n": 199, "avg": 44.8, "levels": {"Недостаточный": 26, "Минимальный": 85, "Базовый": 62, "Продвинутый": 26}, "uspevaemost": 73.4, "kachestvo": 36.2, "tasks": [{"t": 1, "completion": 62.3, "maxed": 62.3, "unsolved": 37.7}, {"t": 2, "completion": 64.8, "maxed": 64.8, "unsolved": 35.2}, {"t": 3, "completion": 59.0, "maxed": 37.7, "unsolved": 41.0}, {"t": 4, "completion": 52.0, "maxed": 31.2, "unsolved": 48.0}, {"t": 5, "completion": 58.8, "maxed": 36.2, "unsolved": 41.2}, {"t": 6, "completion": 57.5, "maxed": 36.7, "unsolved": 42.5}, {"t": 7, "completion": 56.0, "maxed": 34.2, "unsolved": 44.0}, {"t": 8, "completion": 52.5, "maxed": 33.7, "unsolved": 47.5}, {"t": 9, "completion": 57.0, "maxed": 35.2, "unsolved": 43.0}, {"t": 10, "completion": 59.3, "maxed": 39.2, "unsolved": 40.7}, {"t": 11, "completion": 56.5, "maxed": 35.7, "unsolved": 43.5}, {"t": 12, "completion": 49.4, "maxed": 16.1, "unsolved": 50.6}, {"t": 13, "completion": 61.8, "maxed": 43.2, "unsolved": 38.2}, {"t": 14, "completion": 53.8, "maxed": 32.2, "unsolved": 46.2}, {"t": 15, "completion": 57.8, "maxed": 38.2, "unsolved": 42.2}, {"t": 16, "completion": 53.5, "maxed": 32.7, "unsolved": 46.5}], "solvability": {"легкий": 44.3, "средний": 49.8, "высокий": 36.2}}, "Нет": {"n": 121, "avg": 41.8, "levels": {"Недостаточный": 28, "Минимальный": 60, "Базовый": 24, "Продвинутый": 9}, "uspevaemost": 69.2, "kachestvo": 23.3, "tasks": [{"t": 1, "completion": 56.2, "maxed": 56.2, "unsolved": 43.8}, {"t": 2, "completion": 46.3, "maxed": 46.3, "unsolved": 53.7}, {"t": 3, "completion": 48.3, "maxed": 32.2, "unsolved": 51.7}, {"t": 4, "completion": 48.3, "maxed": 27.3, "unsolved": 51.7}, {"t": 5, "completion": 47.5, "maxed": 26.4, "unsolved": 52.5}, {"t": 6, "completion": 50.4, "maxed": 28.1, "unsolved": 49.6}, {"t": 7, "completion": 46.7, "maxed": 28.1, "unsolved": 53.3}, {"t": 8, "completion": 47.9, "maxed": 26.4, "unsolved": 52.1}, {"t": 9, "completion": 49.2, "maxed": 28.9, "unsolved": 50.8}, {"t": 10, "completion": 48.3, "maxed": 27.3, "unsolved": 51.7}, {"t": 11, "completion": 55.4, "maxed": 36.4, "unsolved": 44.6}, {"t": 12, "completion": 40.5, "maxed": 11.6, "unsolved": 59.5}, {"t": 13, "completion": 56.6, "maxed": 34.7, "unsolved": 43.4}, {"t": 14, "completion": 36.4, "maxed": 16.5, "unsolved": 63.6}, {"t": 15, "completion": 47.9, "maxed": 27.3, "unsolved": 52.1}, {"t": 16, "completion": 41.7, "maxed": 23.1, "unsolved": 58.3}], "solvability": {"легкий": 30.7, "средний": 43.1, "высокий": 23.2}}}, "RU": {"Да": {"n": 170, "avg": 46.5, "levels": {"Недостаточный": 13, "Минимальный": 73, "Базовый": 64, "Продвинутый": 20}, "uspevaemost": 79.3, "kachestvo": 41.6, "tasks": [{"t": 1, "completion": 64.7, "maxed": 64.7, "unsolved": 35.3}, {"t": 2, "completion": 64.7, "maxed": 64.7, "unsolved": 35.3}, {"t": 3, "completion": 56.2, "maxed": 32.9, "unsolved": 43.8}, {"t": 4, "completion": 57.4, "maxed": 38.2, "unsolved": 42.6}, {"t": 5, "completion": 57.1, "maxed": 38.2, "unsolved": 42.9}, {"t": 6, "completion": 63.2, "maxed": 41.2, "unsolved": 36.8}, {"t": 7, "completion": 61.2, "maxed": 40.0, "unsolved": 38.8}, {"t": 8, "completion": 63.5, "maxed": 42.4, "unsolved": 36.5}, {"t": 9, "completion": 56.2, "maxed": 33.5, "unsolved": 43.8}, {"t": 10, "completion": 58.8, "maxed": 38.2, "unsolved": 41.2}, {"t": 11, "completion": 57.6, "maxed": 35.9, "unsolved": 42.4}, {"t": 12, "completion": 51.6, "maxed": 18.8, "unsolved": 48.4}, {"t": 13, "completion": 65.9, "maxed": 43.5, "unsolved": 34.1}, {"t": 14, "completion": 51.5, "maxed": 25.3, "unsolved": 48.5}, {"t": 15, "completion": 53.5, "maxed": 33.5, "unsolved": 46.5}, {"t": 16, "completion": 48.5, "maxed": 25.3, "unsolved": 51.5}], "solvability": {"легкий": 39.5, "средний": 53.6, "высокий": 28.9}}, "Нет": {"n": 124, "avg": 48.3, "levels": {"Недостаточный": 20, "Минимальный": 49, "Базовый": 44, "Продвинутый": 11}, "uspevaemost": 75.3, "kachestvo": 39.8, "tasks": [{"t": 1, "completion": 65.3, "maxed": 65.3, "unsolved": 34.7}, {"t": 2, "completion": 66.9, "maxed": 66.9, "unsolved": 33.1}, {"t": 3, "completion": 60.5, "maxed": 41.1, "unsolved": 39.5}, {"t": 4, "completion": 59.7, "maxed": 42.7, "unsolved": 40.3}, {"t": 5, "completion": 55.6, "maxed": 33.9, "unsolved": 44.4}, {"t": 6, "completion": 56.5, "maxed": 35.5, "unsolved": 43.5}, {"t": 7, "completion": 52.8, "maxed": 35.5, "unsolved": 47.2}, {"t": 8, "completion": 58.9, "maxed": 31.5, "unsolved": 41.1}, {"t": 9, "completion": 50.0, "maxed": 32.3, "unsolved": 50.0}, {"t": 10, "completion": 52.0, "maxed": 28.2, "unsolved": 48.0}, {"t": 11, "completion": 54.8, "maxed": 37.9, "unsolved": 45.2}, {"t": 12, "completion": 48.7, "maxed": 18.5, "unsolved": 51.3}, {"t": 13, "completion": 64.1, "maxed": 41.9, "unsolved": 35.9}, {"t": 14, "completion": 47.2, "maxed": 25.8, "unsolved": 52.8}, {"t": 15, "completion": 54.4, "maxed": 32.3, "unsolved": 45.6}, {"t": 16, "completion": 45.2, "maxed": 23.4, "unsolved": 54.8}], "solvability": {"легкий": 47.4, "средний": 51.5, "высокий": 32.1}}}}, "3": {"Общий": {"Да": {"n": 197, "avg": 51.5, "levels": {"Недостаточный": 14, "Минимальный": 68, "Базовый": 81, "Продвинутый": 34}, "uspevaemost": 81.2, "kachestvo": 51.6, "tasks": [{"t": 1, "completion": 72.1, "maxed": 72.1, "unsolved": 27.9}, {"t": 2, "completion": 68.5, "maxed": 68.5, "unsolved": 31.5}, {"t": 3, "completion": 57.9, "maxed": 37.6, "unsolved": 42.1}, {"t": 4, "completion": 62.4, "maxed": 42.1, "unsolved": 37.6}, {"t": 5, "completion": 62.2, "maxed": 43.7, "unsolved": 37.8}, {"t": 6, "completion": 59.9, "maxed": 41.6, "unsolved": 40.1}, {"t": 7, "completion": 65.5, "maxed": 45.2, "unsolved": 34.5}, {"t": 8, "completion": 60.2, "maxed": 41.1, "unsolved": 39.8}, {"t": 9, "completion": 65.0, "maxed": 44.7, "unsolved": 35.0}, {"t": 10, "completion": 57.9, "maxed": 41.6, "unsolved": 42.1}, {"t": 11, "completion": 63.5, "maxed": 43.1, "unsolved": 36.5}, {"t": 12, "completion": 54.8, "maxed": 23.4, "unsolved": 45.2}, {"t": 13, "completion": 68.8, "maxed": 51.3, "unsolved": 31.2}, {"t": 14, "completion": 56.1, "maxed": 35.0, "unsolved": 43.9}, {"t": 15, "completion": 64.2, "maxed": 46.2, "unsolved": 35.8}, {"t": 16, "completion": 52.3, "maxed": 31.0, "unsolved": 47.7}], "solvability": {"легкий": 44.1, "средний": 60.4, "высокий": 42.1}}, "Нет": {"n": 489, "avg": 44.6, "levels": {"Недостаточный": 95, "Минимальный": 205, "Базовый": 136, "Продвинутый": 53}, "uspevaemost": 71.6, "kachestvo": 33.8, "tasks": [{"t": 1, "completion": 59.1, "maxed": 59.1, "unsolved": 40.9}, {"t": 2, "completion": 54.0, "maxed": 54.0, "unsolved": 46.0}, {"t": 3, "completion": 49.2, "maxed": 29.2, "unsolved": 50.8}, {"t": 4, "completion": 53.7, "maxed": 33.1, "unsolved": 46.3}, {"t": 5, "completion": 52.1, "maxed": 32.5, "unsolved": 47.9}, {"t": 6, "completion": 49.4, "maxed": 30.3, "unsolved": 50.6}, {"t": 7, "completion": 50.6, "maxed": 31.7, "unsolved": 49.4}, {"t": 8, "completion": 56.0, "maxed": 35.4, "unsolved": 44.0}, {"t": 9, "completion": 55.0, "maxed": 35.0, "unsolved": 45.0}, {"t": 10, "completion": 50.6, "maxed": 30.9, "unsolved": 49.4}, {"t": 11, "completion": 50.7, "maxed": 30.5, "unsolved": 49.3}, {"t": 12, "completion": 46.2, "maxed": 17.2, "unsolved": 53.8}, {"t": 13, "completion": 61.0, "maxed": 40.5, "unsolved": 39.0}, {"t": 14, "completion": 46.2, "maxed": 26.4, "unsolved": 53.8}, {"t": 15, "completion": 51.8, "maxed": 30.1, "unsolved": 48.2}, {"t": 16, "completion": 47.5, "maxed": 28.2, "unsolved": 52.5}], "solvability": {"легкий": 35.7, "средний": 46.8, "высокий": 30.2}}}, "AZ": {"Да": {"n": 124, "avg": 49.7, "levels": {"Недостаточный": 11, "Минимальный": 43, "Базовый": 52, "Продвинутый": 18}, "uspevaemost": 79.5, "kachestvo": 49.8, "tasks": [{"t": 1, "completion": 69.4, "maxed": 69.4, "unsolved": 30.6}, {"t": 2, "completion": 68.5, "maxed": 68.5, "unsolved": 31.5}, {"t": 3, "completion": 58.5, "maxed": 38.7, "unsolved": 41.5}, {"t": 4, "completion": 58.9, "maxed": 38.7, "unsolved": 41.1}, {"t": 5, "completion": 61.7, "maxed": 41.1, "unsolved": 38.3}, {"t": 6, "completion": 58.1, "maxed": 41.9, "unsolved": 41.9}, {"t": 7, "completion": 64.1, "maxed": 42.7, "unsolved": 35.9}, {"t": 8, "completion": 59.7, "maxed": 41.1, "unsolved": 40.3}, {"t": 9, "completion": 62.5, "maxed": 40.3, "unsolved": 37.5}, {"t": 10, "completion": 55.6, "maxed": 39.5, "unsolved": 44.4}, {"t": 11, "completion": 62.5, "maxed": 39.5, "unsolved": 37.5}, {"t": 12, "completion": 52.7, "maxed": 23.4, "unsolved": 47.3}, {"t": 13, "completion": 67.7, "maxed": 50.8, "unsolved": 32.3}, {"t": 14, "completion": 51.2, "maxed": 29.8, "unsolved": 48.8}, {"t": 15, "completion": 61.3, "maxed": 44.4, "unsolved": 38.7}, {"t": 16, "completion": 50.0, "maxed": 28.2, "unsolved": 50.0}], "solvability": {"легкий": 42.8, "средний": 59.8, "высокий": 35.6}}, "Нет": {"n": 219, "avg": 46.6, "levels": {"Недостаточный": 39, "Минимальный": 89, "Базовый": 63, "Продвинутый": 28}, "uspevaemost": 73.4, "kachestvo": 36.8, "tasks": [{"t": 1, "completion": 63.5, "maxed": 63.5, "unsolved": 36.5}, {"t": 2, "completion": 51.6, "maxed": 51.6, "unsolved": 48.4}, {"t": 3, "completion": 54.1, "maxed": 32.9, "unsolved": 45.9}, {"t": 4, "completion": 54.6, "maxed": 33.8, "unsolved": 45.4}, {"t": 5, "completion": 54.8, "maxed": 35.2, "unsolved": 45.2}, {"t": 6, "completion": 50.5, "maxed": 32.4, "unsolved": 49.5}, {"t": 7, "completion": 52.5, "maxed": 34.7, "unsolved": 47.5}, {"t": 8, "completion": 58.2, "maxed": 35.6, "unsolved": 41.8}, {"t": 9, "completion": 56.2, "maxed": 35.6, "unsolved": 43.8}, {"t": 10, "completion": 49.5, "maxed": 32.4, "unsolved": 50.5}, {"t": 11, "completion": 54.8, "maxed": 35.2, "unsolved": 45.2}, {"t": 12, "completion": 47.3, "maxed": 15.5, "unsolved": 52.7}, {"t": 13, "completion": 60.3, "maxed": 39.7, "unsolved": 39.7}, {"t": 14, "completion": 51.1, "maxed": 29.7, "unsolved": 48.9}, {"t": 15, "completion": 53.0, "maxed": 31.1, "unsolved": 47.0}, {"t": 16, "completion": 49.5, "maxed": 30.6, "unsolved": 50.5}], "solvability": {"легкий": 41.1, "средний": 48.0, "высокий": 35.2}}}, "RU": {"Да": {"n": 73, "avg": 54.6, "levels": {"Недостаточный": 3, "Минимальный": 25, "Базовый": 29, "Продвинутый": 16}, "uspevaemost": 84.2, "kachestvo": 54.8, "tasks": [{"t": 1, "completion": 76.7, "maxed": 76.7, "unsolved": 23.3}, {"t": 2, "completion": 68.5, "maxed": 68.5, "unsolved": 31.5}, {"t": 3, "completion": 56.8, "maxed": 35.6, "unsolved": 43.2}, {"t": 4, "completion": 68.5, "maxed": 47.9, "unsolved": 31.5}, {"t": 5, "completion": 63.0, "maxed": 47.9, "unsolved": 37.0}, {"t": 6, "completion": 63.0, "maxed": 41.1, "unsolved": 37.0}, {"t": 7, "completion": 67.8, "maxed": 49.3, "unsolved": 32.2}, {"t": 8, "completion": 61.0, "maxed": 41.1, "unsolved": 39.0}, {"t": 9, "completion": 69.2, "maxed": 52.1, "unsolved": 30.8}, {"t": 10, "completion": 61.6, "maxed": 45.2, "unsolved": 38.4}, {"t": 11, "completion": 65.1, "maxed": 49.3, "unsolved": 34.9}, {"t": 12, "completion": 58.4, "maxed": 23.3, "unsolved": 41.6}, {"t": 13, "completion": 70.5, "maxed": 52.1, "unsolved": 29.5}, {"t": 14, "completion": 64.4, "maxed": 43.8, "unsolved": 35.6}, {"t": 15, "completion": 69.2, "maxed": 49.3, "unsolved": 30.8}, {"t": 16, "completion": 56.2, "maxed": 35.6, "unsolved": 43.8}], "solvability": {"легкий": 46.5, "средний": 61.5, "высокий": 53.3}}, "Нет": {"n": 270, "avg": 44.4, "levels": {"Недостаточный": 56, "Минимальный": 116, "Базовый": 73, "Продвинутый": 25}, "uspevaemost": 71.5, "kachestvo": 32.3, "tasks": [{"t": 1, "completion": 55.6, "maxed": 55.6, "unsolved": 44.4}, {"t": 2, "completion": 55.9, "maxed": 55.9, "unsolved": 44.1}, {"t": 3, "completion": 45.2, "maxed": 26.3, "unsolved": 54.8}, {"t": 4, "completion": 53.0, "maxed": 32.6, "unsolved": 47.0}, {"t": 5, "completion": 50.0, "maxed": 30.4, "unsolved": 50.0}, {"t": 6, "completion": 48.5, "maxed": 28.5, "unsolved": 51.5}, {"t": 7, "completion": 49.1, "maxed": 29.3, "unsolved": 50.9}, {"t": 8, "completion": 54.3, "maxed": 35.2, "unsolved": 45.7}, {"t": 9, "completion": 54.1, "maxed": 34.4, "unsolved": 45.9}, {"t": 10, "completion": 51.5, "maxed": 29.6, "unsolved": 48.5}, {"t": 11, "completion": 47.4, "maxed": 26.7, "unsolved": 52.6}, {"t": 12, "completion": 45.3, "maxed": 18.5, "unsolved": 54.7}, {"t": 13, "completion": 61.7, "maxed": 41.1, "unsolved": 38.3}, {"t": 14, "completion": 42.2, "maxed": 23.7, "unsolved": 57.8}, {"t": 15, "completion": 50.9, "maxed": 29.3, "unsolved": 49.1}, {"t": 16, "completion": 45.9, "maxed": 26.3, "unsolved": 54.1}], "solvability": {"легкий": 32.7, "средний": 47.2, "высокий": 27.5}}}}}, "generated": "апрель 2026 (синтетика)"};
 
-function metrics(list){
-  const T = BSO.tasks, n = list.length;
-  const lv = {"недостаточный":0,"удовлетворительный":0,"базовый":0,"продвинутый":0};
-  list.forEach(s=>lv[s.lv]++);
-  const usp  = n ? (n-lv["недостаточный"])/n*100 : 0;
-  const kach = n ? (lv["базовый"]+lv["продвинутый"])/n*100 : 0;
-  const diff = {};
-  [1,2,3].forEach(d=>{
-    const idx = T.map((t,i)=>({i,t})).filter(x=>x.t.d===d);
-    const maxD = idx.reduce((a,x)=>a+x.t.m,0);
-    let cnt=0; list.forEach(s=>{const g=idx.reduce((a,x)=>a+s.s[x.i],0); if(maxD>0 && g/maxD>0.5) cnt++;});
-    diff[d] = n ? cnt/n*100 : 0;
+var PROJ="#6D28D9", NON="#C026D3", AUT="#C4B5FD", SPR="#6D28D9";
+var LEVELS=["Недостаточный","Минимальный","Базовый","Продвинутый"];
+var BANDS=[["легкий","Лёгкий"],["средний","Средний"],["высокий","Высокий"]];
+var PIE=["#16A34A","#EAB308","#7C3AED"];
+var PAGES=[["overview","Обзор"],["difficulty","Сложность"],["levels","Уровни"],["tasks","По заданиям"],["compare","Весна vs Осень"]];
+var SECTORS=["Общий","AZ","RU"];
+var DATA=null, grade="2", taskMetric="completion", tab="overview";
+var charts={}, chartSeq=0, pending=[];
+
+function zero(){ return {n:0,avg:0,levels:{"Недостаточный":0,"Минимальный":0,"Базовый":0,"Продвинутый":0},uspevaemost:0,kachestvo:0,
+  tasks:Array.apply(null,Array(16)).map(function(_,i){return {t:i+1,completion:0,maxed:0,unsolved:0};}),
+  solvability:{"легкий":0,"средний":0,"высокий":0}}; }
+function S(sec,ip){ return DATA.byGrade[grade].sectors[sec][ip]||zero(); }
+function A(sec,ip){ var a=DATA.autumn&&DATA.autumn[grade]&&DATA.autumn[grade][sec]?DATA.autumn[grade][sec][ip]:null; return a||zero(); }
+
+function seg(elId,opts,cur,cb){
+  var el=document.getElementById(elId); el.innerHTML="";
+  opts.forEach(function(o){ var b=document.createElement("button"); b.textContent=o.label;
+    if(o.v===cur)b.className="on"; b.onclick=function(){cb(o.v);}; el.appendChild(b); });
+}
+function destroyAll(){ for(var k in charts){ if(charts[k]) charts[k].destroy(); } charts={}; }
+function mk(id,cfg){ var c=document.getElementById(id); if(c) charts[id]=new Chart(c.getContext("2d"),cfg); }
+
+function grp(labels,series,isPct,ls,rot){
+  ls=ls||11; rot=rot||0;
+  function fmt(v){ return (v===0||v==null)?"":(isPct?v+"%":v); }
+  return { type:"bar",
+    data:{ labels:labels, datasets:series.map(function(s){ return { label:s.label, data:s.data, backgroundColor:s.color, borderRadius:4, maxBarThickness:64 }; }) },
+    plugins: (window.ChartDataLabels?[ChartDataLabels]:[]),
+    options:{ responsive:true, maintainAspectRatio:false, layout:{ padding:{ top:18 } },
+      plugins:{ legend:{labels:{boxWidth:11,font:{size:11}}},
+        tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+c.parsed.y+(isPct?"%":"");}}},
+        datalabels:{ display:true, anchor:"end", align:"end", clamp:true, rotation:rot, color:"#5b5570", font:{ size:ls, weight:"600" }, formatter:fmt } },
+      scales:{ y:{ beginAtZero:true, max:100, grid:{color:"#f2eefb"}, ticks:{ callback:function(v){return isPct?v+"%":v;} } },
+               x:{ grid:{display:false}, categoryPercentage:0.6, barPercentage:0.85 } } } };
+}
+function pieCfg(gd){
+  return { type:"doughnut",
+    data:{ labels:["Лёгкий","Средний","Высокий"], datasets:[{data:[gd.difficulty["легкий"],gd.difficulty["средний"],gd.difficulty["высокий"]],backgroundColor:PIE,borderWidth:0}]},
+    plugins: (window.ChartDataLabels?[ChartDataLabels]:[]),
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:"right",labels:{boxWidth:12,font:{size:12}}},
+        tooltip:{callbacks:{label:function(c){return c.label+": "+c.parsed+" заданий";}}},
+        datalabels:{ display:true, color:"#fff", font:{size:15,weight:"700"}, formatter:function(v){return v;} } } } };
+}
+function card(k,v,c){ return '<div class="stat"><div class="k">'+k+'</div><div class="v" style="color:'+c+'">'+v+'</div></div>'; }
+
+var body=null;
+function addRow(title, noteFn, cfgFn, full){
+  var wrap=document.createElement("div"); wrap.className= full?"grid":"grid3";
+  SECTORS.forEach(function(sec){
+    var id="cv"+(chartSeq++); var note=noteFn?noteFn(sec):"";
+    var c=document.createElement("div"); c.className="card";
+    c.innerHTML='<h3>'+title+' · '+sec+'</h3>'+(note?'<p class="note">'+note+'</p>':'')+'<div class="cbox '+(full?'tall':'short')+'"><canvas id="'+id+'"></canvas></div>';
+    wrap.appendChild(c); pending.push([id,cfgFn(sec)]);
   });
-  const perTask = T.map((t,i)=>{const g=list.reduce((a,s)=>a+s.s[i],0); const mx=t.m*n; return mx? g/mx*100:0;});
-  return {n,lv,usp,kach,diff,perTask};
+  body.appendChild(wrap);
 }
-const bySector = se => se==="all" ? BSO.students : BSO.students.filter(s=>s.se===se);
-const R = x => Math.round(x);
-
-// единый плагин подписей регистрируем per-chart (не глобально — иначе тихо отваливается)
-const DL = window.ChartDataLabels;
-
-function levelDoughnut(id, list){
-  const m = metrics(list);
-  new Chart(document.getElementById(id), {
-    type:"doughnut",
-    data:{labels:LEVELS, datasets:[{data:LEVELS.map(l=>m.lv[l]),
-      backgroundColor:LEVELS.map(l=>LCOL[l]), borderWidth:2, borderColor:"#fff"}]},
-    options:{maintainAspectRatio:false, cutout:"58%",
-      plugins:{legend:{position:"bottom",labels:{boxWidth:10,font:{size:10},padding:8}},
-        datalabels:{color:"#fff",font:{weight:600,size:11},
-          formatter:(v,c)=>{const t=c.dataset.data.reduce((a,b)=>a+b,0); return v && v/t>0.06 ? v : "";}}}},
-    plugins:[DL]});
-}
-function diffBars(id, list){
-  const m = metrics(list);
-  new Chart(document.getElementById(id), {
-    type:"bar",
-    data:{labels:["Лёгкие","Средние","Сложные"],
-      datasets:[{data:[m.diff[1],m.diff[2],m.diff[3]],
-        backgroundColor:["#9C8FCB","#7C6BB0","#5C4E96"], borderRadius:6, maxBarThickness:54}]},
-    options:{maintainAspectRatio:false,
-      scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{color:"#F1EEF8"}},x:{grid:{display:false}}},
-      plugins:{legend:{display:false},
-        datalabels:{anchor:"end",align:"end",color:"#5b5278",font:{weight:600,size:11},formatter:v=>R(v)+"%"}}},
-    plugins:[DL]});
-}
-let taskChart=null;
-function taskBars(se){
-  const m = metrics(bySector(se));
-  const labels = BSO.tasks.map(t=>"№"+t.n);
-  const col = BSO.tasks.map(t=>({1:"#9C8FCB",2:"#7C6BB0",3:"#5C4E96"})[t.d]);
-  if(taskChart) taskChart.destroy();
-  taskChart = new Chart(document.getElementById("tk"), {
-    type:"bar",
-    data:{labels, datasets:[{data:m.perTask, backgroundColor:col, borderRadius:5, maxBarThickness:40}]},
-    options:{maintainAspectRatio:false,
-      scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{color:"#F1EEF8"}},x:{grid:{display:false}}},
-      plugins:{legend:{display:false},
-        tooltip:{callbacks:{title:(it)=>"Задание "+BSO.tasks[it[0].dataIndex].n,
-          afterTitle:(it)=>BSO.tasks[it[0].dataIndex].topic,
-          label:(it)=>"Средний балл: "+R(it.raw)+"%"}},
-        datalabels:{anchor:"end",align:"end",color:"#5b5278",font:{weight:600,size:9},formatter:v=>R(v)+"%"}}},
-    plugins:[DL]});
-}
-function cohortChart(){
-  const proj = metrics(BSO.students.filter(s=>s.st==="в проекте"));
-  const ctrl = metrics(BSO.students.filter(s=>s.st==="не в проекте"));
-  new Chart(document.getElementById("ch-kpi"), {
-    type:"bar",
-    data:{labels:["Успеваемость","Качественная успеваемость"],
-      datasets:[
-        {label:"В проекте", data:[proj.usp,proj.kach], backgroundColor:"#7C6BB0", borderRadius:6, maxBarThickness:64},
-        {label:"Не в проекте", data:[ctrl.usp,ctrl.kach], backgroundColor:"#CDC3E8", borderRadius:6, maxBarThickness:64}
-      ]},
-    options:{maintainAspectRatio:false,
-      scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+"%"},grid:{color:"#F1EEF8"}},x:{grid:{display:false}}},
-      plugins:{legend:{position:"top",labels:{boxWidth:12,font:{size:12}}},
-        datalabels:{anchor:"end",align:"end",color:"#5b5278",font:{weight:600,size:11},formatter:v=>R(v)+"%"}}},
-    plugins:[DL]});
+function addCard(title,note,cfg,cls){
+  var id="cv"+(chartSeq++);
+  var c=document.createElement("div"); c.className="card"; c.style.maxWidth="460px";
+  c.innerHTML='<h3>'+title+'</h3>'+(note?'<p class="note">'+note+'</p>':'')+'<div class="cbox '+(cls||"")+'"><canvas id="'+id+'"></canvas></div>';
+  body.appendChild(c); pending.push([id,cfg]);
 }
 
-// KPI обзора
-const mAll = metrics(BSO.students);
-document.getElementById("k-n").textContent = mAll.n;
-document.getElementById("k-usp").textContent = R(mAll.usp)+"%";
-document.getElementById("k-kach").textContent = R(mAll.kach)+"%";
+function render(){
+  seg("nav",PAGES.map(function(p){return {v:p[0],label:p[1]};}),tab,function(v){tab=v;render();});
+  document.getElementById("pageTitle").textContent=(PAGES.filter(function(p){return p[0]===tab;})[0]||["",""])[1];
+  document.getElementById("taskMetricWrap").style.display = (tab==="tasks")?"block":"none";
 
-// charts
-levelDoughnut("lv-all", BSO.students);
-levelDoughnut("lv-az",  bySector("AZ"));
-levelDoughnut("lv-ru",  bySector("RU"));
-diffBars("df-all", BSO.students);
-diffBars("df-az",  bySector("AZ"));
-diffBars("df-ru",  bySector("RU"));
-taskBars("all");
-cohortChart();
+  destroyAll();
+  body=document.getElementById("pageBody"); body.innerHTML=""; chartSeq=0; pending=[];
 
-// nav
-document.getElementById("nav").addEventListener("click",e=>{
-  const b=e.target.closest("button"); if(!b) return;
-  document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("on",x===b));
-  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id===b.dataset.v));
-});
-// task sector toggle
-document.getElementById("task-seg").addEventListener("click",e=>{
-  const b=e.target.closest("button"); if(!b) return;
-  document.querySelectorAll("#task-seg button").forEach(x=>x.classList.toggle("on",x===b));
-  taskBars(b.dataset.s);
-});
+  var nNote=function(sec){ return "в проекте "+S(sec,"Да").n+" · не в проекте "+S(sec,"Нет").n; };
+
+  if(tab==="overview"){
+    var o=S("Общий","Да"), on=S("Общий","Нет");
+    var strip=document.createElement("div"); strip.className="cards";
+    strip.innerHTML=card("Средний балл · в проекте (общий)",o.avg,PROJ)+card("Средний балл · не в проекте",on.avg,NON)+
+      card("Успеваемость · в проекте",o.uspevaemost+"%",PROJ)+card("Качественная · в проекте",o.kachestvo+"%",PROJ);
+    body.appendChild(strip);
+    addRow("Средний балл", nNote, function(sec){
+      return grp(["Средний балл"],[{label:"В проекте",data:[S(sec,"Да").avg],color:PROJ},{label:"Не в проекте",data:[S(sec,"Нет").avg],color:NON}],false);
+    });
+  } else if(tab==="difficulty"){
+    addRow("Решаемость по сложности", null, function(sec){
+      return grp(BANDS.map(function(b){return b[1];}),
+        [{label:"В проекте",data:BANDS.map(function(b){return S(sec,"Да").solvability[b[0]];}),color:PROJ},
+         {label:"Не в проекте",data:BANDS.map(function(b){return S(sec,"Нет").solvability[b[0]];}),color:NON}],true);
+    });
+    var gd=DATA.byGrade[grade];
+    addCard("Распределение заданий по сложности", gd.difficulty["легкий"]+" лёгких · "+gd.difficulty["средний"]+" средних · "+gd.difficulty["высокий"]+" высоких", pieCfg(gd), "short");
+  } else if(tab==="levels"){
+    addRow("Успеваемость и качественная", null, function(sec){
+      return grp(["Успеваемость","Качественная"],
+        [{label:"В проекте",data:[S(sec,"Да").uspevaemost,S(sec,"Да").kachestvo],color:PROJ},
+         {label:"Не в проекте",data:[S(sec,"Нет").uspevaemost,S(sec,"Нет").kachestvo],color:NON}],true);
+    });
+    addRow("Распределение по уровням (%)", null, function(sec){
+      function lv(ip){ var m=S(sec,ip); return LEVELS.map(function(l){return m.n?Math.round(1000*m.levels[l]/m.n)/10:0;}); }
+      return grp(LEVELS,[{label:"В проекте",data:lv("Да"),color:PROJ},{label:"Не в проекте",data:lv("Нет"),color:NON}],true);
+    });
+  } else if(tab==="tasks"){
+    seg("segMetric",[{v:"completion",label:"% выполнения"},{v:"maxed",label:"% на максимум"},{v:"unsolved",label:"% не выполнено"}],taskMetric,function(v){taskMetric=v;render();});
+    addRow("По заданиям 1–16", null, function(sec){
+      return grp(S(sec,"Да").tasks.map(function(t){return "№"+t.t;}),
+        [{label:"В проекте",data:S(sec,"Да").tasks.map(function(t){return t[taskMetric];}),color:PROJ},
+         {label:"Не в проекте",data:S(sec,"Нет").tasks.map(function(t){return t[taskMetric];}),color:NON}],true,9,-90);
+    }, true);
+  } else if(tab==="compare"){
+    function cmp(title,keyOrAvg){
+      addRow(title, null, function(sec){
+        var aDa=A(sec,"Да"), aNo=A(sec,"Нет"), sDa=S(sec,"Да"), sNo=S(sec,"Нет");
+        var pick=function(m){ return keyOrAvg==="avg"?m.avg:m[keyOrAvg]; };
+        return grp(["В проекте","Не в проекте"],
+          [{label:"Осень",data:[pick(aDa),pick(aNo)],color:AUT},
+           {label:"Весна",data:[pick(sDa),pick(sNo)],color:SPR}], keyOrAvg!=="avg");
+      });
+    }
+    cmp("Средний балл · осень→весна","avg");
+    cmp("Успеваемость · осень→весна","uspevaemost");
+    cmp("Качественная · осень→весна","kachestvo");
+  }
+
+  pending.forEach(function(p){ mk(p[0],p[1]); }); pending=[];
+
+  document.getElementById("foot").textContent=
+    "Уровни: 0–30 недостаточный · 31–60 минимальный · 61–80 базовый · 81–100 продвинутый. Данные: "+DATA.generated+
+    (tab==="compare"?" · Осень — синтетический ранний срез для сравнения динамики.":"");
+  document.getElementById("sidefoot").textContent="Синтетические данные (вымышленные имена). В live-версии метрики читаются из листа LongData_All в Google Sheets.";
+}
+
+function buildPrompt(){
+  function agg(m){ return "ср.балл "+m.avg+", успеваемость "+m.uspevaemost+"%, качественная "+m.kachestvo+"%, решаемость(лёг/ср/выс) "+m.solvability["легкий"]+"/"+m.solvability["средний"]+"/"+m.solvability["высокий"]+"%"; }
+  var p="Параллель: "+grade+" класс. Страница: "+(PAGES.filter(function(x){return x[0]===tab;})[0]||["",""])[1]+".\n";
+  SECTORS.forEach(function(sec){
+    p+="\n["+sec+"] весна в проекте (n="+S(sec,"Да").n+"): "+agg(S(sec,"Да"))+"; не в проекте (n="+S(sec,"Нет").n+"): "+agg(S(sec,"Нет"))+".";
+  });
+  return p;
+}
+
+/* Оффлайн-образец анализа: те же числа, что ушли бы в Gemini, но собранные на клиенте. */
+function localAnalysis(){
+  function d(a,b){ return Math.round((a-b)*10)/10; }
+  function sign(x){ return (x>=0?"+":"")+x; }
+  var da=S("Общий","Да"), no=S("Общий","Нет");
+  var az=S("AZ","Да"), ru=S("RU","Да");
+  var aDa=A("Общий","Да");
+  var L=[];
+  L.push("Параллель "+grade+" класс. В проекте средний балл "+da.avg+" против "+no.avg+" вне проекта (разница "+sign(d(da.avg,no.avg))+").");
+  L.push("Успеваемость в проекте "+da.uspevaemost+"%, качественная "+da.kachestvo+"% — против "+no.uspevaemost+"% и "+no.kachestvo+"% в контрольной группе.");
+  L.push("По секторам в проекте: AZ — успеваемость "+az.uspevaemost+"%, RU — "+ru.uspevaemost+"% ("+(ru.uspevaemost>=az.uspevaemost?"RU держит чуть выше":"AZ держит чуть выше")+").");
+  if(aDa && aDa.avg){ L.push("Динамика осень→весна в проекте: средний балл "+aDa.avg+" → "+da.avg+" ("+sign(d(da.avg,aDa.avg))+"), рост заметнее, чем в контрольной группе."); }
+  var weak = da.solvability["высокий"];
+  L.push("Слабее всего даётся высокая сложность (решаемость "+weak+"% в проекте) — вывод: усилить задания повышенного уровня и удерживать набранный отрыв от контроля.");
+  return L.join("\n\n")+"\n\n— образец: оффлайн-сводка из чисел текущего среза; в live-версии этот текст пишет Gemini.";
+}
+
+document.getElementById("aiBtn").onclick=function(){
+  var out=document.getElementById("aiOut"), btn=this;
+  out.textContent="Формирую анализ…"; btn.disabled=true;
+  setTimeout(function(){ out.textContent=localAnalysis(); btn.disabled=false; }, 350);
+};
+
+function topSegs(){
+  seg("segGrade",[{v:"2",label:"2 класс"},{v:"3",label:"3 класс"}],grade,function(v){grade=v;topSegs();render();});
+}
+function onData(d){
+  DATA=d;
+  document.getElementById("load").style.display="none";
+  document.getElementById("app").style.display="block";
+  if(window.Chart){ Chart.defaults.font.family="'Montserrat',sans-serif"; Chart.defaults.color="#6b6680"; }
+  topSegs(); render();
+}
+function onErr(e){
+  document.getElementById("load").style.display="none";
+  var el=document.getElementById("err"); el.style.display="block";
+  el.textContent="Ошибка: "+(e&&e.message?e.message:e);
+}
+onData(DEMO_DATA);
 </script>
 </body>
 </html>

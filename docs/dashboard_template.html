@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>БСО · дашборд (демо на синтетике)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --proj:#6D28D9; --non:#C026D3; --aut:#C4B5FD; --spr:#6D28D9; --ink:#2c2838; --muted:#8b86a0; --line:#ece8f5; --bg:#f4f1fb; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'Montserrat',system-ui,sans-serif; background:var(--bg); color:var(--ink); }
+  .app{ display:flex; min-height:100vh; }
+  .side{ width:212px; flex:none; background:#fff; border-right:1px solid var(--line); padding:20px 14px; }
+  .brand{ font-weight:700; font-size:18px; color:#4c1d95; line-height:1.1; }
+  .brandsub{ font-size:11px; color:var(--muted); margin:2px 0 6px; }
+  .demobadge{ display:inline-block; font-size:9.5px; font-weight:700; letter-spacing:.4px; color:#6D28D9; background:#efe7ff; border:1px solid #ddd0fb; border-radius:6px; padding:2px 6px; margin-bottom:18px; }
+  .nav{ display:flex; flex-direction:column; gap:3px; }
+  .nav button{ text-align:left; border:0; background:none; padding:10px 12px; border-radius:10px; font-family:inherit; font-size:13.5px; font-weight:600; color:#6b6680; cursor:pointer; }
+  .nav button.on{ background:var(--proj); color:#fff; }
+  .nav button:not(.on):hover{ background:var(--bg); }
+  .sidefoot{ font-size:10.5px; color:#b3aec2; margin-top:20px; line-height:1.5; }
+  .main{ flex:1; padding:22px 26px 40px; min-width:0; }
+  h1{ font-size:20px; font-weight:700; margin:0 0 16px; letter-spacing:-.2px; }
+  .controls{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:18px; }
+  .lbl{ font-size:11px; font-weight:600; color:var(--muted); }
+  .seg{ display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; background:#fff; }
+  .seg button{ border:0; padding:6px 12px; font-family:inherit; font-size:12.5px; font-weight:600; background:#fff; color:var(--muted); cursor:pointer; }
+  .seg button.on{ background:var(--proj); color:#fff; }
+  .legend{ margin-left:auto; display:flex; gap:14px; font-size:12px; color:var(--muted); align-items:center; }
+  .dot{ display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:-1px; margin-right:5px; }
+  .cards{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:14px; }
+  @media(min-width:780px){ .cards{ grid-template-columns:repeat(4,1fr);} }
+  .stat{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:15px; }
+  .stat .k{ font-size:11px; color:var(--muted); }
+  .stat .v{ font-size:25px; font-weight:700; margin-top:4px; }
+  .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:14px; }
+  .grid3{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:14px; }
+  @media(min-width:1000px){ .grid3{ grid-template-columns:repeat(3,1fr); } }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; }
+  .card h3{ font-size:13px; font-weight:600; margin:0 0 2px; }
+  .card .note{ font-size:11px; color:#b3aec2; margin:0 0 10px; }
+  .cbox{ position:relative; height:300px; }
+  .cbox.tall{ height:360px; }
+  .cbox.short{ height:250px; }
+  .aibox{ margin-top:6px; }
+  .aihead{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .aihead b{ font-size:13.5px; }
+  .aibtn{ border:1px solid var(--proj); color:var(--proj); background:#fff; border-radius:9px; padding:6px 12px; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .aibtn:hover{ background:#f5f1ff; } .aibtn[disabled]{ opacity:.5; cursor:default; }
+  .aiout{ white-space:pre-wrap; font-size:13px; line-height:1.6; color:#42405a; }
+  .foot{ color:#b3aec2; font-size:11px; margin-top:16px; line-height:1.5; }
+  #err{ display:none; background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:12px; border-radius:10px; font-size:13px; }
+  #load{ color:var(--muted); font-size:13px; padding:40px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">БСО</div>
+    <div class="brandsub">Апрель 2026</div>
+    <div class="demobadge">ДЕМО · СИНТЕТИКА</div>
+    <nav class="nav" id="nav"></nav>
+    <div class="sidefoot" id="sidefoot"></div>
+  </aside>
+
+  <main class="main">
+    <div id="load">Загружаю данные…</div>
+    <div id="err"></div>
+
+    <div id="app" style="display:none">
+      <h1 id="pageTitle">Обзор</h1>
+      <div class="controls">
+        <span class="lbl">Параллель</span><div class="seg" id="segGrade"></div>
+        <span class="legend">
+          <span><span class="dot" style="background:var(--proj)"></span>В проекте</span>
+          <span><span class="dot" style="background:var(--non)"></span>Не в проекте</span>
+        </span>
+      </div>
+
+      <div id="taskMetricWrap" style="display:none; margin-bottom:6px"><div class="seg" id="segMetric"></div></div>
+      <div id="pageBody"></div>
+
+      <div class="card aibox">
+        <div class="aihead"><b>✨ ИИ-анализ (образец)</b><button class="aibtn" id="aiBtn">Проанализировать этот срез</button></div>
+        <div class="aiout" id="aiOut">В live-версии текст генерирует Gemini по текущему срезу. Здесь — оффлайн-образец, собранный из тех же чисел (без вызова ИИ). Нажми кнопку.</div>
+      </div>
+      <p class="foot" id="foot"></p>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<script>
+var DEMO_DATA = __DEMO_DATA__;
+
+var PROJ="#6D28D9", NON="#C026D3", AUT="#C4B5FD", SPR="#6D28D9";
+var LEVELS=["Недостаточный","Минимальный","Базовый","Продвинутый"];
+var BANDS=[["легкий","Лёгкий"],["средний","Средний"],["высокий","Высокий"]];
+var PIE=["#16A34A","#EAB308","#7C3AED"];
+var PAGES=[["overview","Обзор"],["difficulty","Сложность"],["levels","Уровни"],["tasks","По заданиям"],["compare","Весна vs Осень"]];
+var SECTORS=["Общий","AZ","RU"];
+var DATA=null, grade="2", taskMetric="completion", tab="overview";
+var charts={}, chartSeq=0, pending=[];
+
+function zero(){ return {n:0,avg:0,levels:{"Недостаточный":0,"Минимальный":0,"Базовый":0,"Продвинутый":0},uspevaemost:0,kachestvo:0,
+  tasks:Array.apply(null,Array(16)).map(function(_,i){return {t:i+1,completion:0,maxed:0,unsolved:0};}),
+  solvability:{"легкий":0,"средний":0,"высокий":0}}; }
+function S(sec,ip){ return DATA.byGrade[grade].sectors[sec][ip]||zero(); }
+function A(sec,ip){ var a=DATA.autumn&&DATA.autumn[grade]&&DATA.autumn[grade][sec]?DATA.autumn[grade][sec][ip]:null; return a||zero(); }
+
+function seg(elId,opts,cur,cb){
+  var el=document.getElementById(elId); el.innerHTML="";
+  opts.forEach(function(o){ var b=document.createElement("button"); b.textContent=o.label;
+    if(o.v===cur)b.className="on"; b.onclick=function(){cb(o.v);}; el.appendChild(b); });
+}
+function destroyAll(){ for(var k in charts){ if(charts[k]) charts[k].destroy(); } charts={}; }
+function mk(id,cfg){ var c=document.getElementById(id); if(c) charts[id]=new Chart(c.getContext("2d"),cfg); }
+
+function grp(labels,series,isPct,ls,rot){
+  ls=ls||11; rot=rot||0;
+  function fmt(v){ return (v===0||v==null)?"":(isPct?v+"%":v); }
+  return { type:"bar",
+    data:{ labels:labels, datasets:series.map(function(s){ return { label:s.label, data:s.data, backgroundColor:s.color, borderRadius:4, maxBarThickness:64 }; }) },
+    plugins: (window.ChartDataLabels?[ChartDataLabels]:[]),
+    options:{ responsive:true, maintainAspectRatio:false, layout:{ padding:{ top:18 } },
+      plugins:{ legend:{labels:{boxWidth:11,font:{size:11}}},
+        tooltip:{callbacks:{label:function(c){return c.dataset.label+": "+c.parsed.y+(isPct?"%":"");}}},
+        datalabels:{ display:true, anchor:"end", align:"end", clamp:true, rotation:rot, color:"#5b5570", font:{ size:ls, weight:"600" }, formatter:fmt } },
+      scales:{ y:{ beginAtZero:true, max:100, grid:{color:"#f2eefb"}, ticks:{ callback:function(v){return isPct?v+"%":v;} } },
+               x:{ grid:{display:false}, categoryPercentage:0.6, barPercentage:0.85 } } } };
+}
+function pieCfg(gd){
+  return { type:"doughnut",
+    data:{ labels:["Лёгкий","Средний","Высокий"], datasets:[{data:[gd.difficulty["легкий"],gd.difficulty["средний"],gd.difficulty["высокий"]],backgroundColor:PIE,borderWidth:0}]},
+    plugins: (window.ChartDataLabels?[ChartDataLabels]:[]),
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:"right",labels:{boxWidth:12,font:{size:12}}},
+        tooltip:{callbacks:{label:function(c){return c.label+": "+c.parsed+" заданий";}}},
+        datalabels:{ display:true, color:"#fff", font:{size:15,weight:"700"}, formatter:function(v){return v;} } } } };
+}
+function card(k,v,c){ return '<div class="stat"><div class="k">'+k+'</div><div class="v" style="color:'+c+'">'+v+'</div></div>'; }
+
+var body=null;
+function addRow(title, noteFn, cfgFn, full){
+  var wrap=document.createElement("div"); wrap.className= full?"grid":"grid3";
+  SECTORS.forEach(function(sec){
+    var id="cv"+(chartSeq++); var note=noteFn?noteFn(sec):"";
+    var c=document.createElement("div"); c.className="card";
+    c.innerHTML='<h3>'+title+' · '+sec+'</h3>'+(note?'<p class="note">'+note+'</p>':'')+'<div class="cbox '+(full?'tall':'short')+'"><canvas id="'+id+'"></canvas></div>';
+    wrap.appendChild(c); pending.push([id,cfgFn(sec)]);
+  });
+  body.appendChild(wrap);
+}
+function addCard(title,note,cfg,cls){
+  var id="cv"+(chartSeq++);
+  var c=document.createElement("div"); c.className="card"; c.style.maxWidth="460px";
+  c.innerHTML='<h3>'+title+'</h3>'+(note?'<p class="note">'+note+'</p>':'')+'<div class="cbox '+(cls||"")+'"><canvas id="'+id+'"></canvas></div>';
+  body.appendChild(c); pending.push([id,cfg]);
+}
+
+function render(){
+  seg("nav",PAGES.map(function(p){return {v:p[0],label:p[1]};}),tab,function(v){tab=v;render();});
+  document.getElementById("pageTitle").textContent=(PAGES.filter(function(p){return p[0]===tab;})[0]||["",""])[1];
+  document.getElementById("taskMetricWrap").style.display = (tab==="tasks")?"block":"none";
+
+  destroyAll();
+  body=document.getElementById("pageBody"); body.innerHTML=""; chartSeq=0; pending=[];
+
+  var nNote=function(sec){ return "в проекте "+S(sec,"Да").n+" · не в проекте "+S(sec,"Нет").n; };
+
+  if(tab==="overview"){
+    var o=S("Общий","Да"), on=S("Общий","Нет");
+    var strip=document.createElement("div"); strip.className="cards";
+    strip.innerHTML=card("Средний балл · в проекте (общий)",o.avg,PROJ)+card("Средний балл · не в проекте",on.avg,NON)+
+      card("Успеваемость · в проекте",o.uspevaemost+"%",PROJ)+card("Качественная · в проекте",o.kachestvo+"%",PROJ);
+    body.appendChild(strip);
+    addRow("Средний балл", nNote, function(sec){
+      return grp(["Средний балл"],[{label:"В проекте",data:[S(sec,"Да").avg],color:PROJ},{label:"Не в проекте",data:[S(sec,"Нет").avg],color:NON}],false);
+    });
+  } else if(tab==="difficulty"){
+    addRow("Решаемость по сложности", null, function(sec){
+      return grp(BANDS.map(function(b){return b[1];}),
+        [{label:"В проекте",data:BANDS.map(function(b){return S(sec,"Да").solvability[b[0]];}),color:PROJ},
+         {label:"Не в проекте",data:BANDS.map(function(b){return S(sec,"Нет").solvability[b[0]];}),color:NON}],true);
+    });
+    var gd=DATA.byGrade[grade];
+    addCard("Распределение заданий по сложности", gd.difficulty["легкий"]+" лёгких · "+gd.difficulty["средний"]+" средних · "+gd.difficulty["высокий"]+" высоких", pieCfg(gd), "short");
+  } else if(tab==="levels"){
+    addRow("Успеваемость и качественная", null, function(sec){
+      return grp(["Успеваемость","Качественная"],
+        [{label:"В проекте",data:[S(sec,"Да").uspevaemost,S(sec,"Да").kachestvo],color:PROJ},
+         {label:"Не в проекте",data:[S(sec,"Нет").uspevaemost,S(sec,"Нет").kachestvo],color:NON}],true);
+    });
+    addRow("Распределение по уровням (%)", null, function(sec){
+      function lv(ip){ var m=S(sec,ip); return LEVELS.map(function(l){return m.n?Math.round(1000*m.levels[l]/m.n)/10:0;}); }
+      return grp(LEVELS,[{label:"В проекте",data:lv("Да"),color:PROJ},{label:"Не в проекте",data:lv("Нет"),color:NON}],true);
+    });
+  } else if(tab==="tasks"){
+    seg("segMetric",[{v:"completion",label:"% выполнения"},{v:"maxed",label:"% на максимум"},{v:"unsolved",label:"% не выполнено"}],taskMetric,function(v){taskMetric=v;render();});
+    addRow("По заданиям 1–16", null, function(sec){
+      return grp(S(sec,"Да").tasks.map(function(t){return "№"+t.t;}),
+        [{label:"В проекте",data:S(sec,"Да").tasks.map(function(t){return t[taskMetric];}),color:PROJ},
+         {label:"Не в проекте",data:S(sec,"Нет").tasks.map(function(t){return t[taskMetric];}),color:NON}],true,9,-90);
+    }, true);
+  } else if(tab==="compare"){
+    function cmp(title,keyOrAvg){
+      addRow(title, null, function(sec){
+        var aDa=A(sec,"Да"), aNo=A(sec,"Нет"), sDa=S(sec,"Да"), sNo=S(sec,"Нет");
+        var pick=function(m){ return keyOrAvg==="avg"?m.avg:m[keyOrAvg]; };
+        return grp(["В проекте","Не в проекте"],
+          [{label:"Осень",data:[pick(aDa),pick(aNo)],color:AUT},
+           {label:"Весна",data:[pick(sDa),pick(sNo)],color:SPR}], keyOrAvg!=="avg");
+      });
+    }
+    cmp("Средний балл · осень→весна","avg");
+    cmp("Успеваемость · осень→весна","uspevaemost");
+    cmp("Качественная · осень→весна","kachestvo");
+  }
+
+  pending.forEach(function(p){ mk(p[0],p[1]); }); pending=[];
+
+  document.getElementById("foot").textContent=
+    "Уровни: 0–30 недостаточный · 31–60 минимальный · 61–80 базовый · 81–100 продвинутый. Данные: "+DATA.generated+
+    (tab==="compare"?" · Осень — синтетический ранний срез для сравнения динамики.":"");
+  document.getElementById("sidefoot").textContent="Синтетические данные (вымышленные имена). В live-версии метрики читаются из листа LongData_All в Google Sheets.";
+}
+
+function buildPrompt(){
+  function agg(m){ return "ср.балл "+m.avg+", успеваемость "+m.uspevaemost+"%, качественная "+m.kachestvo+"%, решаемость(лёг/ср/выс) "+m.solvability["легкий"]+"/"+m.solvability["средний"]+"/"+m.solvability["высокий"]+"%"; }
+  var p="Параллель: "+grade+" класс. Страница: "+(PAGES.filter(function(x){return x[0]===tab;})[0]||["",""])[1]+".\n";
+  SECTORS.forEach(function(sec){
+    p+="\n["+sec+"] весна в проекте (n="+S(sec,"Да").n+"): "+agg(S(sec,"Да"))+"; не в проекте (n="+S(sec,"Нет").n+"): "+agg(S(sec,"Нет"))+".";
+  });
+  return p;
+}
+
+/* Оффлайн-образец анализа: те же числа, что ушли бы в Gemini, но собранные на клиенте. */
+function localAnalysis(){
+  function d(a,b){ return Math.round((a-b)*10)/10; }
+  function sign(x){ return (x>=0?"+":"")+x; }
+  var da=S("Общий","Да"), no=S("Общий","Нет");
+  var az=S("AZ","Да"), ru=S("RU","Да");
+  var aDa=A("Общий","Да");
+  var L=[];
+  L.push("Параллель "+grade+" класс. В проекте средний балл "+da.avg+" против "+no.avg+" вне проекта (разница "+sign(d(da.avg,no.avg))+").");
+  L.push("Успеваемость в проекте "+da.uspevaemost+"%, качественная "+da.kachestvo+"% — против "+no.uspevaemost+"% и "+no.kachestvo+"% в контрольной группе.");
+  L.push("По секторам в проекте: AZ — успеваемость "+az.uspevaemost+"%, RU — "+ru.uspevaemost+"% ("+(ru.uspevaemost>=az.uspevaemost?"RU держит чуть выше":"AZ держит чуть выше")+").");
+  if(aDa && aDa.avg){ L.push("Динамика осень→весна в проекте: средний балл "+aDa.avg+" → "+da.avg+" ("+sign(d(da.avg,aDa.avg))+"), рост заметнее, чем в контрольной группе."); }
+  var weak = da.solvability["высокий"];
+  L.push("Слабее всего даётся высокая сложность (решаемость "+weak+"% в проекте) — вывод: усилить задания повышенного уровня и удерживать набранный отрыв от контроля.");
+  return L.join("\n\n")+"\n\n— образец: оффлайн-сводка из чисел текущего среза; в live-версии этот текст пишет Gemini.";
+}
+
+document.getElementById("aiBtn").onclick=function(){
+  var out=document.getElementById("aiOut"), btn=this;
+  out.textContent="Формирую анализ…"; btn.disabled=true;
+  setTimeout(function(){ out.textContent=localAnalysis(); btn.disabled=false; }, 350);
+};
+
+function topSegs(){
+  seg("segGrade",[{v:"2",label:"2 класс"},{v:"3",label:"3 класс"}],grade,function(v){grade=v;topSegs();render();});
+}
+function onData(d){
+  DATA=d;
+  document.getElementById("load").style.display="none";
+  document.getElementById("app").style.display="block";
+  if(window.Chart){ Chart.defaults.font.family="'Montserrat',sans-serif"; Chart.defaults.color="#6b6680"; }
+  topSegs(); render();
+}
+function onErr(e){
+  document.getElementById("load").style.display="none";
+  var el=document.getElementById("err"); el.style.display="block";
+  el.textContent="Ошибка: "+(e&&e.message?e.message:e);
+}
+onData(DEMO_DATA);
+</script>
+</body>
+</html>

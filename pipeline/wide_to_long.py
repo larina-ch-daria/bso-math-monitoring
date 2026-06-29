@@ -40,7 +40,7 @@ def main():
     tasks = load_tasks()
     levels = load_levels()
 
-    ros_by_name = {normalize_name(r["ФИО"]): r for r in roster}
+    ros_by_name = {(normalize_name(r["ФИО"]), r["Учитель"]): r for r in roster}
     task_cols = sorted(
         [c for c in raw[0].keys() if c.startswith("t") and c[1:].isdigit()],
         key=lambda c: int(c[1:]),
@@ -49,7 +49,7 @@ def main():
     rows = []
     n_skipped = 0
     for r in raw:
-        key = normalize_name(r["ФИО"])
+        key = (normalize_name(r["ФИО"]), r["Учитель"])
         meta = ros_by_name.get(key)
         if meta is None:
             n_skipped += 1  # нет в эталонном списке — не обогащаем (см. reconcile)
