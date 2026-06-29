@@ -70,37 +70,65 @@ python docs/build.py   # перегенерирует docs/index.html
 
 ---
 
-## Архитектура
+## Маршрут данных (от работы ученика до графика)
+
+Цепочка прозрачна насквозь и **исполняется оффлайн** — видно, какие данные на
+входе и как именно считается каждый балл:
 
 ```
-   Широкая выгрузка БСО            Эталонный список
-   (raw.*.csv, t1..t16)            (roster.*.csv: сектор, статус)
-            │                              │
-            └──────────┬───────────────────┘
-                       ▼
-              pipeline/reconcile.py      ← сверка, поиск дублей/расхождений
-                       │
-                       ▼
-              pipeline/wide_to_long.py   ← нормализация + джойн + уровни
-                       │
-                       ▼
-              LongData_All (canonical, длинный формат)
-                       │
-                       ▼
-      Google Sheets ──► dashboard (Apps Script + Chart.js) ──► ИИ-анализ
+  Работа ученика (PDF)                 specs/answer_key.csv     specs/task_topics.csv
+  sample-data/work-samples/*.pdf       (ключ: верные ответы)    (тема, сложность, макс. балл)
+            │                                  │                        │
+            ▼                                  ▼                        │
+   pipeline/grade.py  ── сверяет ответы с ключом потокенно ────────────┘
+            │            (1 балл за каждое верное под-задание; см. правило ниже)
+            ▼
+   raw (широкий формат: t1..t16 — баллы)      roster (сектор/язык, статус когорты)
+            │                                         │
+            └──────────────┬──────────────────────────┘
+                           ▼
+                pipeline/reconcile.py   ← сверка, поиск дублей/расхождений
+                           ▼
+                pipeline/wide_to_long.py   ← нормализация + джойн + уровни
+                           ▼
+                LongData_All (canonical, длинный формат)
+                           ▼
+                docs/index.html  ← живой статический дашборд (Chart.js)
+```
+
+**Правило подсчёта баллов (одно, явное).** За каждое верное под-задание — 1 балл;
+балл за задание = число совпавших с ключом под-ответов, не больше макс. балла.
+Если ответ совпал с ключом — балл засчитывается всегда (никаких ложных нулей).
+В проде ответы из **рукописных** работ извлекает ИИ-станция (`grading-station/`,
+Claude vision); `pipeline/grade.py` — её прозрачный детерминированный аналог,
+применяющий ту же рубрику.
+
+### Проследить одного ученика за минуту
+
+```bash
+# 1) открой работу: sample-data/work-samples/work_01.pdf — видно ответы ученика
+# 2) тот же ученик глазами грейдера — ответ vs ключ vs балл по каждому заданию:
+python pipeline/grade.py --from-pdf sample-data/work-samples
+# 3) его баллы лежат в sample-data/raw.sample.csv, метаданные — в roster.sample.csv
+# 4) обогащённые строки — в sample-data/LongData_All.sample.csv
+# 5) агрегаты по нему и по всем — на дашборде docs/index.html
 ```
 
 ## Структура репозитория
 
 ```
-pipeline/         Python: сверка источников и конвертация wide → long
+pipeline/         Python: грейдинг, сверка источников и конвертация wide → long
   common.py         общие помощники (нормализация ФИО, уровни, параллель)
+  grade.py          ответы учеников → баллы по ключу (аналог ИИ-станции)
   reconcile.py      кросс-сверка raw ↔ roster
   wide_to_long.py   широкий → длинный (LongData_All) с обогащением
 dashboard/        Google Apps Script web app (BsoDashboard.gs + .html)
-grading-station/  React-станция проверки рукописных работ
-specs/            ключи/рубрики: task_topics.csv, levels.json
-sample-data/      СИНТЕТИЧЕСКИЕ данные + генератор (запуск «из коробки»)
+grading-station/  React-станция проверки рукописных работ (Claude vision)
+specs/            answer_key.csv (ключ), task_topics.csv, levels.json
+sample-data/      СИНТЕТИКА: генератор, ответы, баллы, примеры работ в PDF
+  generate_sample.py     создаёт roster + answers (ответы учеников)
+  render_work_samples.py рисует примеры работ в PDF
+  work-samples/*.pdf     несколько работ — «вход» цепочки
 docs/             ЖИВОЕ ДЕМО: index.html (статический дашборд) + build.py
                   + скриншоты для README
 ```
@@ -108,22 +136,34 @@ docs/             ЖИВОЕ ДЕМО: index.html (статический даш
 ## Как запустить (на синтетических данных)
 
 ```bash
-# 1. (опц.) перегенерировать синтетику
+# 1. (опц.) перегенерировать ответы учеников и эталонный список
 python sample-data/generate_sample.py
 
-# 2. сверить источники — отчёт о дублях и расхождениях
+# 2. грейдинг: ответы → баллы по ключу (широкий формат)
+python pipeline/grade.py \
+    --answers sample-data/answers.sample.csv \
+    --out sample-data/raw.sample.csv
+
+# 3. сверить источники — отчёт о дублях и расхождениях
 python pipeline/reconcile.py \
     --raw sample-data/raw.sample.csv \
     --roster sample-data/roster.sample.csv
 
-# 3. собрать канонический длинный формат
+# 4. собрать канонический длинный формат
 python pipeline/wide_to_long.py \
     --raw sample-data/raw.sample.csv \
     --roster sample-data/roster.sample.csv \
     --out sample-data/LongData_All.sample.csv
+
+# 5. (опц.) пересобрать живой дашборд из длинных данных
+python docs/build.py
+
+# Бонус: показать грейдер на примерах работ в PDF
+python pipeline/grade.py --from-pdf sample-data/work-samples
 ```
 
-Зависимостей нет — только стандартная библиотека Python 3.
+Для пайплайна и дашборда зависимостей нет (стандартная библиотека Python 3).
+Для примеров работ в PDF: `pip install reportlab pdfplumber`.
 
 > В синтетику **намеренно** внедрены два кейса для демонстрации `reconcile.py`:
 > один дубль (тот же ученик с идентичными баллами — как один PDF, обработанный
